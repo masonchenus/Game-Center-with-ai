@@ -1,0 +1,17 @@
+# Browse list configuration for browser compatibility
+# See https://github.com/browserslist/browserslist
+
+# Production
+[production]
+> 0.2%
+last 2 versions
+Firefox ESR
+not dead
+not IE 9-11
+
+# Development
+[development]
+last 1 Chrome version
+last 1 Firefox version
+last 1 Safari version
+last 1 Edge version
