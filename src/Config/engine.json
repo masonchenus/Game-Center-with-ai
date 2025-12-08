@@ -1,0 +1,19 @@
+{
+  "testEnvironment": "jsdom",
+  "moduleFileExtensions": [
+    "js",
+    "jsx",
+    "json",
+    "vue"
+  ],
+  "transform": {
+    "^.+\\.jsx?$": "babel-jest"
+  },
+  "moduleNameMapper": {
+    "^react$": "react",
+    "^react-dom$": "react-dom"
+  },
+  "setupFiles": [
+    "<rootDir>/jestSetup.js"
+  ]
+}

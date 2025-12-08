@@ -17,9 +17,8 @@
     "cancelAnimationFrame": "readonly"
   },
   "rules": {
-    "indent": ["error", 2],
+    "max-lines": ["warn", {"max": 35000}],
     "linebreak-style": ["error", "unix"],
-    "quotes": ["error", "single"],
     "semi": ["error", "always"],
     "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
     "no-console": ["warn", { "allow": ["warn", "error"] }],
@@ -35,7 +34,7 @@
     "object-curly-spacing": ["error", "always"],
     "array-bracket-spacing": ["error", "never"],
     "keyword-spacing": "error",
-    "comma-spacing": "error",
+    "comma-spacing": "warn",
     "no-trailing-spaces": "error",
     "eol-last": ["error", "always"],
     "max-len": ["warn", { "code": 100, "ignoreUrls": true }],
@@ -45,3 +44,4 @@
     "brace-style": ["error", "1tbs", { "allowSingleLine": false }]
   }
 }
+// eslint-disable-next-line eol-last

@@ -39,3 +39,7 @@ npm test
 - `src/Config/AppSettings.json`: Application settings.
 - `src/Core/`: HTML files for different modes.
 - `src/Testing Files/`: Test files.
+
+## Errors
+
+****: If you encounter any errors during installation or usage, please check your Node.js version and try reinstalling dependencies. If the issue persists, feel free to submit a pull request on my "Issues.txt" file.****

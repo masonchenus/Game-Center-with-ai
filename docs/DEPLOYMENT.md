@@ -376,3 +376,40 @@ For deployment issues:
 - Review error logs
 - Test locally first
 - Consult DevTools Network tab
+
+# Trobuleshooting Tips 
+
+1. **Clear browser cache**
+2. **Disable ad blockers**
+3. **Try incognito mode**
+4. **Check network connection**
+5. **Verify server status**
+6. **Review platform docs**  
+
+
+*** If all fails, edit the issues.txt file and submit a bug report! ***
+
+
+# Teamwork
+
+- **Communication**: Regular check-ins, Slack channel.
+- **Code Reviews**: Pull Requests for major changes.
+- **Documentation**: Keep this README up-to-date.
+- **Testing**: Automated tests and manual QA sessions.
+- **Version Control**: Git branching model (e.g., feature branches).
+- **Security**: Periodic security audits and updates.
+- **Accessibility**: Ensure WCAG compliance during development.
+- **Continuous Integration**: Automate testing and deployment pipelines.
+- **Feedback Loop**: Collect feedback from users and iterate quickly.
+- **Collaboration Tools**: Utilize tools like Trello, Asana, or Jira for project management.
+- **Knowledge Sharing**: Share best practices and lessons learned within the team.
+- **Conflict Resolution**: Address conflicts promptly through open communication and compromise.
+- **Team Building Activities**: Organize occasional team-building events to foster camaraderie.
+- **Mentorship Program**: Pair experienced developers with newer members for guidance.
+- **Open Source Contribution**: Encourage contributions back to open-source projects related to our work.
+- **Regular Retrospectives**: Conduct regular retrospectives to reflect on past achievements and identify areas for improvement.
+- **Cross-functional Collaboration**: Foster collaboration across different departments (designers, testers, etc.).
+- **Remote Work Culture**: Promote a positive remote work culture by setting clear expectations and maintaining transparency.
+- **Professional Development**: Provide opportunities for professional growth and skill enhancement.
+- ~~ **Professional Development**: Provide opportunities for professional growth and skill enhancement.~~ ~~Oh wait, i forgot we already did that!~~
+If you know how to fix a bug, submit a pull request or edit the file: "bugs.txt".
