@@ -5,7 +5,7 @@
   "type": "module",
   "main": "src/main.js",
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test": "jest",
     "start": "node src/main.js"
   },
   "dependencies": {
@@ -31,10 +31,10 @@
   "jest": {
     "testEnvironment": "jsdom",
     "moduleNameMapper": {
-      "\.(css|less|scss|sass)$": "identity-obj-proxy"
+      "\\.(css|less|scss|sass)$": "identity-obj-proxy"
     },
     "transform": {
-      "^.+\.jsx?$": "babel-jest"
+      "^.+\\.jsx?$": "babel-jest"
     }
   }
 }
