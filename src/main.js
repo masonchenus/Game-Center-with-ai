@@ -1,4 +1,5 @@
 // Import the AppSettings.json file with correct case-sensitive path
+import React, { useState } from 'react';
 import APP_SETTINGS from './Config/AppSettings.json';
 
 // Import utility functions
@@ -13,7 +14,7 @@ import { log } from './Shared/utils.js';
 export async function loadModeHTML(mode, settings, logFunction) {
     let htmlPath;
     if (mode === 'gamecenter') {
-        htmlPath = './gamecenter.html';
+        htmlPath = './Core/gamecenter.html';
     } else {
         htmlPath = `./Core/${mode}.html`;
     }
@@ -32,25 +33,52 @@ export async function loadModeHTML(mode, settings, logFunction) {
     }
 }
 
+/*************  ✨ Windsurf Command 🌟  *************/
+
 /**
  * Main application logic.
  */
-export async function startApplication() {
-    log("Application starting up...", "STARTUP");
+export const StartApplication = () => {
+    const [mode, setMode] = React.useState('gamecenter');
+    const [initialized, setInitialized] = React.useState(false);
 
-    // 1. Load Configuration
+    React.useEffect(() => {
+        const debugMode = APP_SETTINGS.app.debugMode;
+        const apiUrl = APP_SETTINGS.networking.apiBaseUrl;
+        log(`Debug Mode: ${debugMode}. API: ${apiUrl}`, 'CONFIG');
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlMode = urlParams.get('mode');
+        if (urlMode === 'workshop') {
+            setMode('workshop');
+        }
+
+        loadModeHTML(mode, APP_SETTINGS, log).then(() => {
+            setInitialized(true);
+        });
+    }, []);
+
+    return (
+        initialized ? (
+            <div>
+                <h1>Initialization Complete</h1>
+            </div>
+        ) : (
+            <div>
+                <h1>Initializing...</h1>
+            </div>
+        )
+    );
+};
+
+export async function startApplication() {
+    log("Application starting up...", 'STARTUP');
+
     const debugMode = APP_SETTINGS.app.debugMode;
     const apiUrl = APP_SETTINGS.networking.apiBaseUrl;
-    log(`Debug Mode: ${debugMode}. API: ${apiUrl}`, "CONFIG");
+    log(`Debug Mode: ${debugMode}. API: ${apiUrl}`, 'CONFIG');
 
-    // 2. Determine which mode to launch (Game Center or Workshop)
-    // This logic depends on URL parameters.
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const mode = urlParams.get('mode') === 'workshop' ? 'workshop' : 'gamecenter';
-
-    // Load the appropriate HTML content
-    await loadModeHTML(mode, APP_SETTINGS, log);
+    await StartApplication();
 
     log("Initialization complete.", "STARTUP");
 }

@@ -1,0 +1,65 @@
+{
+  "name": "Game Center - Ultimate Gaming Experience",
+  "short_name": "Game Center",
+  "description": "A comprehensive gaming platform featuring multiple game modes with dynamic content loading and competitive gameplay",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#667eea",
+  "background_color": "#ffffff",
+  "categories": ["games", "entertainment"],
+  "screenshots": [
+    {
+      "src": "/Assets/images/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/Assets/images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "icons": [
+    {
+      "src": "/Assets/images/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/Assets/images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Space Invaders",
+      "short_name": "Invaders",
+      "description": "Classic space invaders arcade game",
+      "url": "/?game=spaceinvaders",
+      "icons": [
+        {
+          "src": "/Assets/images/logo.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Chaos Weapons",
+      "short_name": "Chaos",
+      "description": "Ultimate space combat with chaos weapon",
+      "url": "/?game=spaceinvadersbutbetter",
+      "icons": [
+        {
+          "src": "/Assets/images/logo.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false
+}

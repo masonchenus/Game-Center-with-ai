@@ -1,10 +1,13 @@
+
+> gamecenter@1.0.1 start
+> node src/main.js
 Traceback (most recent call last):
   File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/runpy.py", line 197, in _run_module_as_main
     return _run_code(code, main_globals, None,
   File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/runpy.py", line 87, in _run_code
     exec(code, run_globals)
   File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 1297, in <module>
-    test(
+    test(HandlerClass=SimpleHTTPRequestHandler)
   File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/http/server.py", line 1252, in test
     with ServerClass(addr, HandlerClass) as httpd:
   File "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/socketserver.py", line 452, in __init__
