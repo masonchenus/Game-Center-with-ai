@@ -1,0 +1,8 @@
+{
+  "player": {
+    "name": "Player 1",
+    "level": 1,
+    "health": 100,
+    "mana": 50
+  }
+}

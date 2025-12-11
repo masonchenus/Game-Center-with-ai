@@ -1,0 +1,2201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculator • Graph • Practice</title>
+    <style>
+        :root {
+            --bg: #0b0f18;
+            --panel: #0f1628;
+            --ink: #e9f0ff;
+            --muted: #a9b7d9;
+            --accent: #66aaff;
+            --danger: #ff6b6b;
+            --ok: #22c55e;
+            --btn: #151e36;
+            --btn2: #132038;
+            --grid-gap: 10px;
+            --radius: 14px;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            --calc-bg-mode: linear-gradient;
+            /* 'solid' or 'linear-gradient' */
+            --calc-bg-color1: #0f1628;
+            --calc-bg-color2: #0d1426;
+            --calc-bg-angle: 180deg;
+            /* Epilepsy theme customization */
+            --epilepsy-color1: #ff0022;
+            --epilepsy-color2: #0033ff;
+            --epilepsy-speed: 200ms;
+            --epilepsy-colorful-speed: 100ms;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            background: radial-gradient(1200px 800px at 70% 30%, #0c1326 0%, #0a0f1d 45%, #090e19 100%);
+            color: var(--ink);
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", sans-serif
+        }
+
+        .wrap {
+            min-height: 100%;
+            display: block;
+            padding: 0
+        }
+
+        .calc {
+            width: 100vw;
+            max-width: 100vw;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 0;
+            box-shadow: var(--shadow);
+            overflow: hidden
+        }
+
+        /* Dynamic calculator background based on color picker */
+        .calc[data-bg-mode="solid"] {
+            background: var(--calc-bg-color1);
+        }
+
+        .calc[data-bg-mode="gradient"] {
+            background: linear-gradient(var(--calc-bg-angle), var(--calc-bg-color1), var(--calc-bg-color2));
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            padding: 12px 12px 0 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08)
+        }
+
+        .tab {
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--ink);
+            font-size: 14px
+        }
+
+        .tab.active {
+            background: rgba(102, 170, 255, 0.18);
+            border-color: rgba(102, 170, 255, 0.35)
+        }
+
+        .panel {
+            display: none
+        }
+
+        .panel.active {
+            display: block
+        }
+
+        .spacer {
+            flex: 1
+        }
+
+        .display {
+            padding: 20px 18px 12px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: linear-gradient(180deg, #0e172d, #0d1426)
+        }
+
+        .expr {
+            min-height: 26px;
+            color: var(--muted);
+            font-size: 16px;
+            letter-spacing: 0.3px;
+            word-break: break-word
+        }
+
+        .result {
+            min-height: 60px;
+            font-size: 48px;
+            line-height: 1.1;
+            font-weight: 600;
+            word-break: break-word
+        }
+
+        .keypad {
+            padding: 10px 14px 14px 14px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--grid-gap)
+        }
+
+        button {
+            cursor: pointer;
+            appearance: none;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: linear-gradient(180deg, var(--btn), var(--btn2));
+            color: var(--ink);
+            font-size: 20px;
+            padding: 16px 12px;
+            border-radius: 12px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+            transition: transform .03s ease, filter .15s ease
+        }
+
+        .keypad button {
+            min-height: 112px
+        }
+
+        button:active {
+            transform: translateY(1px)
+        }
+
+        .op {
+            color: #b0c6ff
+        }
+
+        .wide {
+            grid-column: span 2
+        }
+
+        .accent {
+            background: linear-gradient(180deg, #264d8e, #1d3d72);
+            border-color: #2a539a
+        }
+
+        .danger {
+            background: linear-gradient(180deg, #442027, #32161c);
+            border-color: #5a2b34;
+            color: #ffc5c5
+        }
+
+        .footer {
+            padding: 8px 14px 14px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--muted);
+            font-size: 12px;
+            flex-wrap: wrap;
+            gap: 8px
+        }
+
+        .badge {
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--ink)
+        }
+
+        /* Color picker controls */
+        .colorControls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 6px 0
+        }
+
+        .colorControls label {
+            font-size: 11px;
+            color: var(--muted)
+        }
+
+        .colorControls input[type="color"] {
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 6px;
+            background: transparent;
+            padding: 0
+        }
+
+        .colorControls input[type="range"] {
+            width: 80px
+        }
+
+        .colorControls .modeToggle {
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.06);
+            font-size: 11px;
+            transition: background .15s ease
+        }
+
+        .colorControls .modeToggle.active {
+            background: rgba(102, 170, 255, 0.2);
+            border-color: rgba(102, 170, 255, 0.3)
+        }
+
+        .colorStop {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            padding: 4px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08)
+        }
+
+        .colorStop input[type="range"] {
+            width: 60px
+        }
+
+        .colorStop button {
+            padding: 2px 6px;
+            font-size: 10px;
+            min-height: auto
+        }
+
+        .colorStops {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            align-items: center
+        }
+
+        .addColorBtn {
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(34, 197, 94, 0.15);
+            font-size: 11px;
+            color: var(--ok)
+        }
+
+        /* Settings Modal */
+        .settingsModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            backdrop-filter: blur(4px)
+        }
+
+        .settingsModal.active {
+            display: flex
+        }
+
+        .settingsBox {
+            width: min(680px, 94vw);
+            max-height: 85vh;
+            background: var(--panel);
+            color: var(--ink);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            overflow-y: auto
+        }
+
+        .settingsBox h2 {
+            margin: 0 0 16px 0;
+            font-size: 22px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px
+        }
+
+        .settingsBox h3 {
+            margin: 16px 0 8px 0;
+            font-size: 16px;
+            color: var(--accent)
+        }
+
+        .settingsSection {
+            margin-bottom: 20px
+        }
+
+        .settingRow {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin: 8px 0;
+            flex-wrap: wrap
+        }
+
+        .settingRow label {
+            min-width: 80px;
+            font-size: 13px
+        }
+
+        .closeSettings {
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 8px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            font-size: 14px;
+            margin-top: 12px
+        }
+
+        /* Zoom & Pan */
+        .calcWrapper {
+            transform-origin: 0 0;
+            transition: transform 0.08s ease-out;
+            will-change: transform
+        }
+
+        .calcWrapper.dragging {
+            transition: none;
+            cursor: grabbing
+        }
+
+        /* Wide, short layout on large screens */
+        @media (min-width: 1024px) {
+            .keypad {
+                grid-template-columns: repeat(8, 1fr);
+            }
+
+            .result {
+                font-size: 56px;
+                min-height: 72px;
+            }
+
+            .keypad button {
+                min-height: 128px;
+                font-size: 21px;
+                padding: 18px 14px
+            }
+
+            .tab {
+                font-size: 13px
+            }
+        }
+
+        /* Graph panel */
+        .row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap
+        }
+
+        .field {
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .field input,
+        .practice select {
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: #0b142a;
+            color: var(--ink)
+        }
+
+        .graphwrap {
+            padding: 12px
+        }
+
+        #graph {
+            background: #0b1122;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            width: 100%;
+            height: 360px;
+            display: block
+        }
+
+        /* Fun preset interactive effects */
+        @keyframes rippleExpand {
+            from {
+                transform: scale(0);
+                opacity: .35
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 0
+            }
+        }
+
+        @keyframes resCatch {
+            0% {
+                transform: scale(1);
+                text-shadow: none
+            }
+
+            40% {
+                transform: scale(1.08);
+                text-shadow: 0 6px 18px rgba(255, 184, 107, 0.35)
+            }
+
+            100% {
+                transform: scale(1);
+                text-shadow: none
+            }
+        }
+
+        @keyframes shardFall {
+            to {
+                transform: translate(var(--dx, 0px), 120vh) rotate(var(--rot, 0deg));
+                opacity: 0
+            }
+        }
+
+        /* Elements created at runtime */
+        .fun-ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0));
+            pointer-events: none;
+            transform: scale(0);
+            animation: rippleExpand 600ms ease-out forwards;
+        }
+
+        .fun-flyClone {
+            position: fixed;
+            z-index: 999;
+            pointer-events: none;
+            font-weight: 700;
+            color: var(--accent);
+            filter: drop-shadow(0 6px 16px rgba(255, 184, 107, 0.28));
+        }
+
+        .fun-shards {
+            position: fixed;
+            inset: auto 0 0 0;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .fun-shard {
+            position: fixed;
+            color: var(--accent);
+            will-change: transform, opacity;
+            animation: shardFall var(--dur, 900ms) cubic-bezier(.2, .8, .2, 1) forwards;
+            font-size: clamp(28px, 4vw, 52px);
+            font-weight: 800;
+        }
+
+        .result.fun-flash {
+            animation: resCatch 600ms ease-out;
+        }
+
+        /* keep ripples contained to buttons while in fun theme */
+        body.theme-fun .keypad button {
+            position: relative;
+            overflow: hidden
+        }
+
+        /* Practice */
+        .practice {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px
+        }
+
+        .practice .problem {
+            padding: 12px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08)
+        }
+
+        .okBadge {
+            background: rgba(34, 197, 94, 0.2);
+            border-color: rgba(34, 197, 94, 0.5)
+        }
+
+        .errBadge {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: rgba(255, 107, 107, 0.5)
+        }
+
+        /* Themes */
+        /* Robot theme: cool neon on steel */
+        @keyframes robotScan {
+            0% {
+                background-position: 0 0
+            }
+
+            100% {
+                background-position: 0 40px
+            }
+        }
+
+        @keyframes robotPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 18px rgba(82, 224, 255, 0.25), inset 0 0 14px rgba(82, 224, 255, 0.08)
+            }
+
+            50% {
+                box-shadow: 0 0 26px rgba(82, 224, 255, 0.45), inset 0 0 18px rgba(82, 224, 255, 0.12)
+            }
+        }
+
+        body.theme-robot {
+            --bg: #080c14;
+            --panel: #0b1220;
+            --ink: #e6f3ff;
+            --muted: #a2b4d6;
+            --accent: #52e0ff;
+            --btn: #111b32;
+            --btn2: #0e1628
+        }
+
+        body.theme-robot .badge {
+            border-color: rgba(82, 224, 255, 0.35);
+            background: rgba(82, 224, 255, 0.08)
+        }
+
+        /* subtle cyan grid behind content */
+        body.theme-robot .wrap {
+            position: relative
+        }
+
+        body.theme-robot .wrap::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                repeating-linear-gradient(0deg, rgba(82, 224, 255, 0.06) 0 1px, transparent 1px 40px),
+                repeating-linear-gradient(90deg, rgba(82, 224, 255, 0.05) 0 1px, transparent 1px 40px);
+        }
+
+        /* neon frame and corner brackets around the calculator */
+        body.theme-robot .calc {
+            position: relative;
+            border-color: rgba(82, 224, 255, 0.25);
+            animation: robotPulse 3s ease-in-out infinite
+        }
+
+        body.theme-robot .calc::before {
+            content: "";
+            position: absolute;
+            inset: 6px;
+            pointer-events: none;
+            z-index: 2;
+            background:
+                /* TL */
+                linear-gradient(90deg, rgba(82, 224, 255, 0.85), rgba(82, 224, 255, 0.2)) top left/42px 2px no-repeat,
+                linear-gradient(0deg, rgba(82, 224, 255, 0.85), rgba(82, 224, 255, 0.2)) top left/2px 42px no-repeat,
+                /* TR */
+                linear-gradient(90deg, rgba(82, 224, 255, 0.2), rgba(82, 224, 255, 0.85)) top right/42px 2px no-repeat,
+                linear-gradient(0deg, rgba(82, 224, 255, 0.85), rgba(82, 224, 255, 0.2)) top right/2px 42px no-repeat,
+                /* BL */
+                linear-gradient(90deg, rgba(82, 224, 255, 0.85), rgba(82, 224, 255, 0.2)) bottom left/42px 2px no-repeat,
+                linear-gradient(0deg, rgba(82, 224, 255, 0.2), rgba(82, 224, 255, 0.85)) bottom left/2px 42px no-repeat,
+                /* BR */
+                linear-gradient(90deg, rgba(82, 224, 255, 0.2), rgba(82, 224, 255, 0.85)) bottom right/42px 2px no-repeat,
+                linear-gradient(0deg, rgba(82, 224, 255, 0.2), rgba(82, 224, 255, 0.85)) bottom right/2px 42px no-repeat;
+            filter: drop-shadow(0 0 8px rgba(82, 224, 255, 0.35));
+        }
+
+        /* faint scanlines within display area */
+        body.theme-robot .display {
+            position: relative;
+        }
+
+        body.theme-robot .display::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            background: repeating-linear-gradient(180deg, rgba(82, 224, 255, 0.06) 0 2px, transparent 2px 8px);
+            animation: robotScan 6s linear infinite;
+        }
+
+        /* buttons with cyan edges and hover glow */
+        body.theme-robot .keypad button {
+            border-color: rgba(82, 224, 255, 0.22);
+            box-shadow: 0 0 10px rgba(82, 224, 255, 0.18), inset 0 0 8px rgba(82, 224, 255, 0.06);
+        }
+
+        body.theme-robot .keypad button:hover {
+            filter: brightness(1.12) saturate(1.1);
+            box-shadow: 0 0 18px rgba(82, 224, 255, 0.35), inset 0 0 10px rgba(82, 224, 255, 0.08);
+        }
+
+        /* Leaf theme: greens */
+        body.theme-leaf {
+            --bg: #07110a;
+            --panel: #0b1a10;
+            --ink: #e7ffef;
+            --muted: #a3d2b4;
+            --accent: #4be38a;
+            --btn: #0f2a1a;
+            --btn2: #0c2015
+        }
+
+        body.theme-leaf .calc {
+            background: linear-gradient(180deg, var(--panel), #0b1510)
+        }
+
+        /* Unsatisfying theme: odd spacing, clashing hues, imperfect shapes */
+        body.theme-unsatisfying {
+            --bg: #140e07;
+            --panel: #1a1411;
+            --ink: #ffe9e9;
+            --muted: #d4a3a3;
+            --accent: #ff8bd1;
+            --btn: #2a1a16;
+            --btn2: #221612;
+            --grid-gap: 7px
+        }
+
+        body.theme-unsatisfying .keypad button,
+        body.theme-unsatisfying .tab,
+        body.theme-unsatisfying .badge {
+            border-width: 2px;
+            border-color: rgba(255, 255, 255, 0.22);
+            border-radius: var(--tl, 12px) var(--tr, 10px) var(--br, 14px) var(--bl, 9px);
+            transform: rotate(var(--rot, 0deg));
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+        }
+
+        /* Satisfying theme: soft pastel and smooth */
+        body.theme-satisfying {
+            --bg: #0b0f13;
+            --panel: #0d1520;
+            --ink: #f4f9ff;
+            --muted: #c6d4ea;
+            --accent: #86b5ff;
+            --btn: #121c2b;
+            --btn2: #0f1826
+        }
+
+        body.theme-satisfying .calc {
+            box-shadow: 0 18px 44px rgba(0, 0, 0, 0.45)
+        }
+
+        /* Fun theme: playful animations */
+        @keyframes floaty {
+            0% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-2px)
+            }
+
+            100% {
+                transform: translateY(0)
+            }
+        }
+
+        body.theme-fun {
+            --bg: #0b0d15;
+            --panel: #121a2c;
+            --ink: #fdfcff;
+            --muted: #b1c1e9;
+            --accent: #ffb86b;
+            --btn: #1b2340;
+            --btn2: #172036
+        }
+
+        body.theme-fun .keypad button {
+            animation: floaty 3s ease-in-out infinite
+        }
+
+        body.theme-fun .keypad button:hover {
+            filter: brightness(1.15)
+        }
+
+        /* Colorful theme: animated rainbow */
+        @keyframes rainbowShift {
+            0% {
+                filter: hue-rotate(0deg)
+            }
+
+            100% {
+                filter: hue-rotate(360deg)
+            }
+        }
+
+        @keyframes hueCycle {
+            0% {
+                filter: hue-rotate(0deg)
+            }
+
+            100% {
+                filter: hue-rotate(360deg)
+            }
+        }
+
+        @keyframes spinBg {
+            0% {
+                transform: rotate(0deg)
+            }
+
+            100% {
+                transform: rotate(360deg)
+            }
+        }
+
+        @keyframes flashBg {
+
+            0%,
+            100% {
+                opacity: .5
+            }
+
+            50% {
+                opacity: .9
+            }
+        }
+
+        body.theme-colorful {
+            --bg: #0a0a12;
+            --panel: #0b0f1c;
+            --ink: #ffffff;
+            --muted: #e6e6ff;
+            --accent: #ffffff;
+            --btn: #1a1a2b;
+            --btn2: #141425;
+            background: radial-gradient(1200px 800px at 70% 30%, #2a1a5e 0%, #102a53 45%, #0b1126 100%);
+            position: relative;
+        }
+
+        /* rotating, flashing rainbow backdrop */
+        body.theme-colorful::before {
+            content: "";
+            position: fixed;
+            inset: -20%;
+            z-index: 0;
+            background: conic-gradient(from 0deg, #ff6ec4, #7873f5, #4ade80, #fbbf24, #f472b6, #60a5fa, #ff6ec4);
+            filter: blur(40px) saturate(120%);
+            animation: spinBg 40s linear infinite, hueCycle 12s linear infinite, flashBg 2.4s ease-in-out infinite;
+            transform-origin: center center;
+        }
+
+        /* ensure app content sits above the animated backdrop */
+        body.theme-colorful .wrap,
+        body.theme-colorful .calc {
+            position: relative;
+            z-index: 1;
+        }
+
+        body.theme-colorful .calc {
+            background: linear-gradient(180deg, rgba(20, 20, 40, 0.7), rgba(15, 15, 35, 0.9));
+            backdrop-filter: blur(6px)
+        }
+
+        body.theme-colorful .keypad button {
+            background: linear-gradient(135deg, #ff6ec4, #7873f5);
+            border-color: rgba(255, 255, 255, 0.25);
+            animation: rainbowShift 6s linear infinite;
+        }
+
+        body.theme-colorful .display {
+            background: linear-gradient(180deg, rgba(20, 20, 40, 0.6), rgba(15, 15, 35, 0.9))
+        }
+
+        /* Glass theme: translucent glassmorphism */
+        body.theme-glass {
+            --bg: #06080d;
+            --panel: rgba(255, 255, 255, 0.06);
+            --ink: #f5f8ff;
+            --muted: #cfe0ff;
+            --accent: #a9c7ff;
+            --btn: rgba(255, 255, 255, 0.10);
+            --btn2: rgba(255, 255, 255, 0.06)
+        }
+
+        body.theme-glass .calc {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(10px) saturate(120%);
+        }
+
+        body.theme-glass .display {
+            background: rgba(255, 255, 255, 0.08)
+        }
+
+        body.theme-glass .keypad button {
+            background: rgba(255, 255, 255, 0.10);
+            border-color: rgba(255, 255, 255, 0.22)
+        }
+
+        body.theme-glass .badge {
+            background: rgba(255, 255, 255, 0.10);
+            border-color: rgba(255, 255, 255, 0.22)
+        }
+
+        /* Epileptic theme: WARNING intense flashing and rapid motion */
+        @keyframes epilepticBG {
+            0% {
+                background: var(--epilepsy-color1)
+            }
+
+            50% {
+                background: var(--epilepsy-color2)
+            }
+
+            100% {
+                background: var(--epilepsy-color1)
+            }
+        }
+
+        @keyframes resFlash {
+            0% {
+                color: #10ff74
+            }
+
+            50% {
+                color: #3bb3ff
+            }
+
+            100% {
+                color: #10ff74
+            }
+        }
+
+        @keyframes spinFast {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        @keyframes bwFlash {
+            0% {
+                filter: invert(0)
+            }
+
+            50% {
+                filter: invert(1)
+            }
+
+            100% {
+                filter: invert(0)
+            }
+        }
+
+        body.theme-epileptic {
+            position: relative
+        }
+
+        body.theme-epileptic::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            opacity: 0.9;
+            animation: epilepticBG var(--epilepsy-speed) steps(1) infinite;
+        }
+
+        body.theme-epileptic .wrap,
+        body.theme-epileptic .calc {
+            position: relative;
+            z-index: 1
+        }
+
+        body.theme-epileptic #res {
+            animation: resFlash 220ms steps(1) infinite
+        }
+
+        body.theme-epileptic .badge,
+        body.theme-epileptic .tab,
+        body.theme-epileptic .field input {
+            animation: spinFast 400ms linear infinite, bwFlash 150ms steps(1) infinite;
+            transform-origin: center center;
+        }
+
+        /* Consent modal */
+        .modalOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999
+        }
+
+        .modalBox {
+            width: min(540px, 92vw);
+            background: var(--panel);
+            color: var(--ink);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: var(--shadow)
+        }
+
+        .modalBox h3 {
+            margin: 0 0 6px 0
+        }
+
+        .modalBox p {
+            margin: 6px 0 12px 0;
+            color: var(--muted)
+        }
+
+        .modalBox .row {
+            justify-content: flex-end
+        }
+
+        /* Colorful Epilepsy theme: WARNING extremely fast full-spectrum flashing */
+        @keyframes hueCycleUltra {
+            0% {
+                filter: hue-rotate(0deg)
+            }
+
+            100% {
+                filter: hue-rotate(360deg)
+            }
+        }
+
+        @keyframes strobeFast {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: .55
+            }
+        }
+
+        @keyframes spinBgFast {
+            0% {
+                transform: rotate(0)
+            }
+
+            100% {
+                transform: rotate(360deg)
+            }
+        }
+
+        body.theme-colorfulEpilepsy {
+            position: relative
+        }
+
+        /* ultra-fast spinning gradient overlay */
+        body.theme-colorfulEpilepsy::before {
+            content: "";
+            position: fixed;
+            inset: -25%;
+            z-index: 0;
+            opacity: .95;
+            background: conic-gradient(from 0deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+            animation: spinBgFast 1.2s linear infinite, hueCycleUltra 600ms linear infinite, strobeFast var(--epilepsy-colorful-speed) steps(1) infinite;
+            filter: saturate(180%) contrast(140%);
+            transform-origin: center;
+        }
+
+        body.theme-colorfulEpilepsy .wrap,
+        body.theme-colorfulEpilepsy .calc {
+            position: relative;
+            z-index: 1
+        }
+
+        /* push hue/strobe to (nearly) everything for extra intensity */
+        body.theme-colorfulEpilepsy * {
+            animation: hueCycleUltra 280ms linear infinite, strobeFast var(--epilepsy-colorful-speed) steps(1) infinite;
+            will-change: filter, opacity
+        }
+
+        /* Simplistic theme: one-pad, minimal, light gradient */
+        body.theme-simplistic {
+            --bg: #f0f2f7;
+            --panel: #f9fafc;
+            --ink: #111;
+            --muted: #444;
+            --accent: #222;
+            --btn: transparent;
+            --btn2: transparent;
+            --grid-gap: 0px;
+            background: #f0f2f7;
+        }
+
+        body.theme-simplistic .calc {
+            background: linear-gradient(180deg, #ffffff, #e9edf3);
+            border: 1px solid #e2e6ee;
+            box-shadow: none
+        }
+
+        body.theme-simplistic .display {
+            background: transparent
+        }
+
+        body.theme-simplistic .keypad {
+            background: transparent
+        }
+
+        body.theme-simplistic .keypad button {
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+            color: #111;
+            transition: background-color .08s ease;
+        }
+
+        body.theme-simplistic .keypad button:hover {
+            background: rgba(0, 0, 0, 0.03)
+        }
+
+        body.theme-simplistic .keypad button:active {
+            background: rgba(0, 0, 0, 0.06);
+            transform: none
+        }
+
+        body.theme-simplistic .tab,
+        body.theme-simplistic .badge {
+            background: transparent;
+            border: 0;
+            color: var(--muted)
+        }
+
+        body.theme-simplistic .tab.active {
+            color: var(--ink);
+            font-weight: 600;
+            text-decoration: underline
+        }
+
+        body.theme-simplistic .expr {
+            color: #333
+        }
+
+        body.theme-simplistic .result {
+            color: #111
+        }
+
+        body.theme-simplistic #graph {
+            background: #f3f6fb;
+            border-color: #e2e6ee
+        }
+
+        body.theme-simplistic .practice .problem {
+            background: #f5f7fb;
+            border-color: #e2e6ee
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="calcWrapper" id="calcWrapper">
+            <div class="calc" role="application" aria-label="Calculator">
+                <div class="tabs">
+                    <button class="tab active" data-panel="calcPanel">Calculator</button>
+                    <button class="tab" data-panel="graphPanel">Graph</button>
+                    <button class="tab" data-panel="practicePanel">Practice</button>
+                    <button class="tab" data-panel="convertPanel">Convert</button>
+                    <div class="spacer"></div>
+                    <button id="settingsBtn" class="badge" title="Open settings">⚙ Settings</button>
+                </div>
+
+                <div id="calcPanel" class="panel active">
+                    <div class="display">
+                        <div id="expr" class="expr" aria-live="polite"></div>
+                        <div id="res" class="result" aria-live="polite">0</div>
+                    </div>
+                    <div class="keypad" aria-label="Keypad">
+                        <!-- top row: functions and parentheses -->
+                        <button class="op" data-fn="sin" title="Sine">sin</button>
+                        <button class="op" data-fn="cos" title="Cosine">cos</button>
+                        <button class="op" data-fn="tan" title="Tangent">tan</button>
+                        <button class="op" data-value="^" title="Exponent">^</button>
+
+                        <!-- advanced math row -->
+                        <button class="op" data-fn="sqrt" title="Square root">√</button>
+                        <button class="op" data-fn="inv" title="Reciprocal">x⁻¹</button>
+                        <button class="op" data-fn="ln" title="Natural log">ln</button>
+                        <button class="op" data-fn="log" title="Log base 10">log</button>
+                        <button class="op" data-fn="log10" title="Base-10 log">log₁₀</button>
+                        <button class="op" data-template="logb(, )" title="log base b of x">log_b</button>
+                        <button class="op" data-template="nroot(, )" title="n-th root">ⁿ√</button>
+                        <button class="op" data-template="frac(, )" title="Fraction">a⁄b</button>
+                        <button class="op" data-template="sum('i^2', 1, 10)" title="Summation">Σ</button>
+                        <button class="op" data-template="int('sin(x)', 0, PI)" title="Integral">∫</button>
+                        <button class="op" data-template="ddx('sin(x)', 0)" title="Derivative">d/dx</button>
+                        <button class="op" data-template="π" title="Pi">π</button>
+                        <button class="op" data-template="E" title="Euler's number">e</button>
+
+                        <button class="op" data-fn="sinh" title="Hyperbolic sine">sinh</button>
+                        <button class="op" data-fn="cosh" title="Hyperbolic cosine">cosh</button>
+                        <button class="op" data-fn="tanh" title="Hyperbolic tangent">tanh</button>
+                        <button class="op" data-value="(" title="(">(</button>
+
+                        <button class="op" data-fn="csc" title="Cosecant">csc</button>
+                        <button class="op" data-fn="cot" title="Cotangent">cot</button>
+                        <button class="op" data-value=")" title=")">)</button>
+                        <span class="badge">π and e allowed</span>
+
+                        <!-- Memory and variables -->
+                        <button class="op" data-action="sto" title="Store result to memory symbol">STO</button>
+                        <button class="op" data-action="rcl" title="Recall last stored symbol">RCL</button>
+                        <button class="op" data-action="mplus" title="Memory add (M+)">M+</button>
+                        <button class="op" data-action="mminus" title="Memory subtract (M-)">M-</button>
+                        <button class="op wide" data-action="putvar" title="Store result into a named variable">Put
+                            Var</button>
+
+                        <button class="danger" data-action="clear" title="Clear (C)">C</button>
+                        <button class="danger" data-action="delete" title="Delete (⌫)">⌫</button>
+                        <span class="badge">Keys: 0-9, + − × ÷, %, ( ), ^, Enter, Backspace</span>
+                        <button id="angleBtn" class="badge" title="Toggle angle mode">DEG</button>
+
+                        <button data-value="7">7</button>
+                        <button data-value="8">8</button>
+                        <button data-value="9">9</button>
+                        <button class="op" data-value="*" title="Multiply">×</button>
+
+                        <button data-value="4">4</button>
+                        <button data-value="5">5</button>
+                        <button data-value="6">6</button>
+                        <button class="op" data-value="-" title="Subtract">−</button>
+
+                        <button data-value="1">1</button>
+                        <button data-value="2">2</button>
+                        <button data-value="3">3</button>
+                        <button class="op" data-value="+" title="Add">+</button>
+
+                        <button data-action="sign" title="Toggle Sign">±</button>
+                        <button data-value="0">0</button>
+                        <button class="op" data-value="%" title="Percent">%</button>
+                        <button class="accent" data-action="equals" title="Equals">=</button>
+                    </div>
+                    <div class="footer">
+                        <span class="badge">Keyboard: 0-9, + − × ÷, %, (), ^, Enter, Backspace</span>
+                        <span>v2.1</span>
+                    </div>
+                </div>
+
+                <div id="graphPanel" class="panel">
+                    <div class="graphwrap">
+                        <div class="row" style="margin-bottom:8px;">
+                            <div class="field"><label>y = </label><input id="funcInput" type="text" value="sin(x)"
+                                    size="28" /></div>
+                            <div class="field"><label>x min</label><input id="xmin" type="number" value="-10" step="1"
+                                    style="width:90px" /></div>
+                            <div class="field"><label>x max</label><input id="xmax" type="number" value="10" step="1"
+                                    style="width:90px" /></div>
+                            <button id="plotBtn" class="badge">Plot</button>
+                        </div>
+                        <canvas id="graph"></canvas>
+                    </div>
+                </div>
+
+                <div id="practicePanel" class="panel">
+                    <div class="practice">
+                        <div class="row">
+                            <div class="field">
+                                <label for="ptype">Type</label>
+                                <select id="ptype">
+                                    <option value="linear">Linear Equation</option>
+                                    <option value="quadratic">Quadratic (integer roots)</option>
+                                    <option value="word">Word Problem</option>
+                                </select>
+                            </div>
+                            <button id="newProb" class="badge">New Problem</button>
+                        </div>
+                        <div id="probText" class="problem">Press "New Problem"</div>
+                        <div class="row">
+                            <input id="answer" type="text" placeholder="Your answer" />
+                            <button id="checkAns" class="badge">Check</button>
+                            <span id="feedback" class="badge" style="display:none"></span>
+                        </div>
+                    </div>
+
+                    <div id="convertPanel" class="panel">
+                        <div class="practice">
+                            <div class="row">
+                                <div class="field">
+                                    <label for="convCat">Category</label>
+                                    <select id="convCat">
+                                        <option value="length">Length</option>
+                                        <option value="time">Time</option>
+                                        <option value="mass">Mass</option>
+                                        <option value="energy">Energy</option>
+                                        <option value="area">Area</option>
+                                        <option value="volume">Volume</option>
+                                        <option value="data">Data</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="field">
+                                    <label for="convAmount">Amount</label>
+                                    <input id="convAmount" type="number" value="1" step="any" />
+                                </div>
+                                <div class="field">
+                                    <label>from</label>
+                                    <span id="convFromUnit" class="badge">Planck length (ℓₚ)</span>
+                                    <span>to</span>
+                                    <span id="convToUnit" class="badge">quettameter (Qm)</span>
+                                </div>
+                                <button id="convBtn" class="badge">Convert</button>
+                            </div>
+                            <div class="row">
+                                <div id="convOut" class="problem">Result will appear here.</div>
+                            </div>
+                            <div class="row" style="font-size:12px;color:var(--muted)">
+                                Extremes use SI prefixes (quecto/quett a) and Planck units where appropriate.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div><!-- end calcWrapper -->
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="settingsModal" id="settingsModal">
+        <div class="settingsBox">
+            <h2>⚙ Settings</h2>
+
+            <div class="settingsSection">
+                <h3>Theme</h3>
+                <div class="settingRow">
+                    <label>Select Theme:</label>
+                    <select id="themeSelect" class="field">
+                        <option value="robot">Robot</option>
+                        <option value="leaf">Leaf</option>
+                        <option value="unsatisfying">Unsatisfying</option>
+                        <option value="satisfying">Satisfying</option>
+                        <option value="fun">Fun</option>
+                        <option value="colorful">Colorful</option>
+                        <option value="glass">Glass</option>
+                        <option value="simplistic">Simplistic</option>
+                        <option value="epileptic">Epileptic ⚠️</option>
+                        <option value="colorfulEpilepsy">Colorful Epilepsy ⚠️</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="settingsSection">
+                <h3>Background Colors</h3>
+                <div class="settingRow">
+                    <button class="modeToggle" id="solidModeSettings">Solid</button>
+                    <button class="modeToggle active" id="gradientModeSettings">Gradient</button>
+                </div>
+                <div class="settingRow">
+                    <label>Gradient Angle:</label>
+                    <input type="range" id="bgAngleSettings" min="0" max="360" step="15" value="180"
+                        style="width:150px" />
+                    <span id="angleValueSettings">180°</span>
+                </div>
+                <div class="settingRow">
+                    <label>Color Stops:</label>
+                    <button class="addColorBtn" id="addColorStop">+ Add Color</button>
+                </div>
+                <div id="colorStopsContainer" class="colorStops">
+                    <!-- Color stops will be added here dynamically -->
+                </div>
+            </div>
+
+            <div class="settingsSection">
+                <h3>Zoom & Pan</h3>
+                <div class="settingRow">
+                    <label>Zoom Level:</label>
+                    <input type="range" id="zoomSlider" min="0" max="100" value="0" style="width:200px" />
+                    <span id="zoomValue">1.0x</span>
+                    <button class="badge" id="resetZoom">Reset</button>
+                </div>
+                <div class="settingRow" style="font-size:12px;color:var(--muted)">
+                    Use pinch gestures to zoom, drag to pan. Zoom range: 1x - 1000x
+                </div>
+            </div>
+
+            <div class="settingsSection">
+                <h3>⚠️ Epilepsy Theme Customization</h3>
+                <div class="settingRow" style="font-size:12px;color:var(--danger);margin-bottom:8px">
+                    WARNING: These settings control intense flashing effects. Use with extreme caution.
+                </div>
+                <div class="settingRow">
+                    <label>Flash Color 1:</label>
+                    <input type="color" id="epilepsyColor1" value="#ff0022" title="First flash color" />
+                </div>
+                <div class="settingRow">
+                    <label>Flash Color 2:</label>
+                    <input type="color" id="epilepsyColor2" value="#0033ff" title="Second flash color" />
+                </div>
+                <div class="settingRow">
+                    <label>Flash Speed:</label>
+                    <input type="range" id="epilepsySpeed" min="50" max="1000" step="50" value="200"
+                        style="width:200px" />
+                    <span id="epilepsySpeedValue">200ms</span>
+                </div>
+                <div class="settingRow">
+                    <label>Colorful Speed:</label>
+                    <input type="range" id="epilepsyColorfulSpeed" min="50" max="500" step="25" value="100"
+                        style="width:200px" />
+                    <span id="epilepsyColorfulSpeedValue">100ms</span>
+                </div>
+                <div class="settingRow" style="font-size:11px;color:var(--muted)">
+                    Lower values = faster flashing. Default: 200ms (epileptic), 100ms (colorful epilepsy)
+                </div>
+            </div>
+
+            <button class="closeSettings" id="closeSettings">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Utility: superscript/subscript digits for pretty display ---
+        const SUP = { "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹", "+": "⁺", "-": "⁻" };
+        const SUB = { "0": "₀", "1": "₁", "2": "₂", "3": "₃", "4": "₄", "5": "₅", "6": "₆", "7": "₇", "8": "₈", "9": "₉", "+": "₊", "-": "₋" };
+        function toSup(str) { return str.split('').map(ch => SUP[ch] || ch).join('') }
+        function toSub(str) { return str.split('').map(ch => SUB[ch] || ch).join('') }
+
+        function prettyExpr(src) {
+            let s = src;
+            // simple a_b -> a₍b₎ for single token b (digits)
+            s = s.replace(/([A-Za-zπe])_(\d+)/g, (m, a, b) => a + toSub(b));
+            // ^(digits) or ^digits -> superscripts
+            s = s.replace(/\^(\d+)/g, (m, p) => toSup(p));
+            // common constants
+            s = s.replace(/PI|pi|π/g, 'π');
+            return s;
+        }
+
+        // --- Angle mode and math wrappers ---
+        let angleMode = 'DEG';
+        const angleBtn = document.getElementById('angleBtn');
+        function toRad(x) { return angleMode === 'DEG' ? (x * Math.PI / 180) : x }
+        // makeScope is defined later with extended functions and variables
+
+        // --- Expression handling and evaluation ---
+        const exprEl = document.getElementById('expr');
+        const resEl = document.getElementById('res');
+        let expression = '';
+        let justEvaluated = false;
+
+        function updateDisplay() { exprEl.textContent = prettyExpr(expression); }
+        function setResult(v) { resEl.textContent = v; }
+
+        function appendToken(token) {
+            if (justEvaluated && /[0-9.(]/.test(token)) expression = '';
+            justEvaluated = false;
+            if (token === '.') {
+                const parts = expression.split(/[^0-9.]/); const last = parts[parts.length - 1] || ''; if (last.includes('.')) return;
+            }
+            expression += token;
+            updateDisplay();
+        }
+
+        function clearAll() { expression = ''; setResult('0'); updateDisplay(); }
+        function deleteOne() { expression = expression.slice(0, -1); updateDisplay(); }
+        function toggleSignSafe() {
+            const re = /(.*?)([-+/*%]?)(\d*\.?\d+)$/;
+            const m = expression.match(re);
+            if (!m) { return; }
+            const [, head, op, num] = m;
+            let v = parseFloat(num);
+            if (Number.isFinite(v)) {
+                v = -v;
+                expression = `${head}${op}${String(v)}`;
+                updateDisplay();
+            }
+        }
+
+        function normalizeForEval(s, allowX = false) {
+            let t = s;
+            t = t.replace(/×/g, '*').replace(/÷/g, '/');
+            // percent -> /100
+            t = t.replace(/(\d*\.?\d+)%/g, '($1/100)');
+            // constants
+            t = t.replace(/π|\bpi\b/gi, 'PI');
+            t = t.replace(/\be\b/g, 'E');
+            // exponent
+            t = t.replace(/\^/g, '**');
+            return t;
+        }
+
+        // Memory & variables
+        const userVars = Object.create(null);
+        const memVars = Object.create(null); // A,B,C,...,M
+        let lastStoredSym = null;
+        let MVal = 0;
+
+        function makeScope() {
+            const sin = (x) => Math.sin(toRad(x));
+            const cos = (x) => Math.cos(toRad(x));
+            const tan = (x) => Math.tan(toRad(x));
+            const csc = (x) => 1 / Math.sin(toRad(x));
+            const cot = (x) => 1 / Math.tan(toRad(x));
+            const sinh = (x) => Math.sinh(x);
+            const cosh = (x) => Math.cosh(x);
+            const tanh = (x) => Math.tanh(x);
+            const sqrt = (x) => Math.sqrt(x);
+            const ln = (x) => Math.log(x);
+            const log = (x) => Math.log10(x);
+            const log10 = (x) => Math.log10(x);
+            const logb = (y, b) => Math.log(y) / Math.log(b);
+            const nroot = (x, n) => Math.sign(x) >= 0 ? Math.pow(Math.abs(x), 1 / n) * (x < 0 && n % 2 ? -1 : 1) : Math.pow(x, 1 / n);
+            const frac = (a, b) => a / b;
+            const inv = (x) => 1 / x;
+            const PI = Math.PI, E = Math.E;
+            // numeric derivative and integral using the same scope
+            const ddx = (exprStr, x0) => {
+                const h = Math.cbrt(Number.EPSILON) * Math.max(1, Math.abs(x0));
+                const f = evalFuncFactory(exprStr);
+                return (f(x0 + h) - f(x0 - h)) / (2 * h);
+            };
+            const int = (exprStr, a, b, n = 512) => {
+                const f = evalFuncFactory(exprStr);
+                const N = Math.max(2, Math.floor(n));
+                const h = (b - a) / N; let sum = 0; let x = a;
+                for (let i = 0; i < N; i++) { const x1 = x + h; sum += 0.5 * h * (f(x) + f(x1)); x = x1; }
+                return sum;
+            };
+            const sum = (exprStr, i0, i1) => {
+                const expr = String(exprStr);
+                let out = 0; for (let i = Math.floor(i0); i <= Math.floor(i1); i++) {
+                    out += evalExprWithVars(expr, { i });
+                }
+                return out;
+            };
+            return { sin, cos, tan, csc, cot, sinh, cosh, tanh, sqrt, ln, log, log10, logb, nroot, frac, inv, ddx, int, sum, PI, E, ...userVars, ...memVars, M: MVal };
+        }
+
+        function evalExprWithVars(exprStr, extraVars) {
+            const prepared = normalizeForEval(exprStr, true);
+            const scope = { ...makeScope(), ...extraVars };
+            const keys = Object.keys(scope);
+            const vals = keys.map(k => scope[k]);
+            // eslint-disable-next-line no-new-func
+            return Function(...keys, `"use strict"; return (${prepared});`)(...vals);
+        }
+
+        function evalFuncFactory(expr) {
+            const prepared = normalizeForEval(expr, true);
+            const scope = makeScope();
+            const keys = Object.keys(scope);
+            const vals = keys.map(k => scope[k]);
+            // eslint-disable-next-line no-new-func
+            const f = Function('x', ...keys, `"use strict"; return (${prepared});`);
+            return (x) => { try { return f(x, ...vals); } catch { return NaN; } };
+        }
+
+        function safeCalcEval(src) {
+            if (!src) return;
+            try {
+                const shown = calcValueString(src);
+                setResult(shown); justEvaluated = true;
+            } catch (e) { setResult('Error'); }
+        }
+
+        // Return the calculated result as a display string, or throw on error
+        function calcValueString(src) {
+            const prepared = normalizeForEval(src, false);
+            const scope = makeScope();
+            const keys = Object.keys(scope);
+            const vals = keys.map(k => scope[k]);
+            // eslint-disable-next-line no-new-func
+            const val = Function(...keys, `"use strict";return (${prepared})`)(...vals);
+            if (val === undefined) return '0';
+            return Number.isFinite(val) ? (Math.round(val * 1e10) / 1e10).toString() : String(val);
+        }
+
+        function isFunTheme() { return document.body.classList.contains('theme-fun'); }
+
+        function spawnRipple(e) {
+            if (!isFunTheme()) return;
+            const btn = e.target.closest('button');
+            if (!btn) return;
+            const rect = btn.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height) * 1.5;
+            const span = document.createElement('span');
+            span.className = 'fun-ripple';
+            span.style.width = span.style.height = size + 'px';
+            const x = (e.clientX ?? (rect.left + rect.width / 2)) - rect.left - size / 2;
+            const y = (e.clientY ?? (rect.top + rect.height / 2)) - rect.top - size / 2;
+            span.style.left = x + 'px';
+            span.style.top = y + 'px';
+            btn.appendChild(span);
+            span.addEventListener('animationend', () => span.remove());
+        }
+
+        function animateThrowToResult(value) {
+            const eqBtn = document.querySelector('.keypad button[data-action="equals"], .keypad button.accent');
+            const fromRect = eqBtn ? eqBtn.getBoundingClientRect() : resEl.getBoundingClientRect();
+            const toRect = resEl.getBoundingClientRect();
+            const clone = document.createElement('div');
+            clone.className = 'fun-flyClone';
+            clone.textContent = value;
+            clone.style.left = (fromRect.left + fromRect.width / 2) + 'px';
+            clone.style.top = (fromRect.top + fromRect.height / 2) + 'px';
+            clone.style.transform = 'translate(-50%, -50%) scale(0.6)';
+            clone.style.transition = 'transform 600ms cubic-bezier(.2,.8,.2,1), left 600ms cubic-bezier(.2,.8,.2,1), top 600ms cubic-bezier(.2,.8,.2,1), opacity 600ms';
+            document.body.appendChild(clone);
+            // next frame
+            requestAnimationFrame(() => {
+                clone.style.left = (toRect.left + 12) + 'px';
+                clone.style.top = (toRect.top + toRect.height / 2) + 'px';
+                clone.style.transform = 'translate(0, -50%) scale(1)';
+            });
+            clone.addEventListener('transitionend', () => {
+                setResult(value);
+                resEl.classList.add('fun-flash');
+                setTimeout(() => resEl.classList.remove('fun-flash'), 650);
+                clone.remove();
+                justEvaluated = true;
+            }, { once: true });
+        }
+
+        function animateClearExplosion() {
+            const exprText = exprEl.textContent || '';
+            const resText = resEl.textContent || '';
+            if (!exprText && (!resText || resText === '0')) { clearAll(); return; }
+            const shards = document.createElement('div'); shards.className = 'fun-shards';
+            document.body.appendChild(shards);
+            const addShard = (ch, startRect) => {
+                const s = document.createElement('div'); s.className = 'fun-shard'; s.textContent = ch;
+                const x = startRect.left + Math.random() * startRect.width;
+                const y = startRect.top + Math.random() * startRect.height;
+                s.style.left = x + 'px'; s.style.top = y + 'px';
+                const spread = 160; const dx = (Math.random() - 0.5) * spread; const rot = (Math.random() * 540 - 270).toFixed(1) + 'deg';
+                s.style.setProperty('--dx', dx + 'px'); s.style.setProperty('--rot', rot);
+                s.style.setProperty('--dur', (700 + Math.random() * 600) + 'ms');
+                shards.appendChild(s);
+            };
+            const exprRect = exprEl.getBoundingClientRect();
+            const resRect = resEl.getBoundingClientRect();
+            [...exprText].forEach(ch => addShard(ch, exprRect));
+            [...resText].forEach(ch => addShard(ch, resRect));
+            // clear displays shortly after shards start
+            setTimeout(() => { expression = ''; setResult('0'); updateDisplay(); }, 120);
+            // cleanup
+            setTimeout(() => { shards.remove(); }, 1400);
+        }
+
+        // Button events
+        document.querySelectorAll('.keypad button').forEach(btn => {
+            const val = btn.getAttribute('data-value');
+            const action = btn.getAttribute('data-action');
+            const fn = btn.getAttribute('data-fn');
+            const tpl = btn.getAttribute('data-template');
+            if (val) {
+                btn.addEventListener('click', (e) => { spawnRipple(e); appendToken(val); });
+            } else if (fn) {
+                btn.addEventListener('click', (e) => { spawnRipple(e); appendToken(fn + '('); });
+            } else if (tpl) {
+                btn.addEventListener('click', (e) => { spawnRipple(e); appendToken(tpl); });
+            } else if (action === 'clear') {
+                btn.addEventListener('click', (e) => { spawnRipple(e); if (isFunTheme()) { animateClearExplosion(); } else { clearAll(); } });
+            } else if (action === 'delete') {
+                btn.addEventListener('click', (e) => { spawnRipple(e); deleteOne(); });
+            } else if (action === 'equals') {
+                btn.addEventListener('click', (e) => {
+                    spawnRipple(e);
+                    if (isFunTheme()) {
+                        try { const shown = calcValueString(expression); animateThrowToResult(shown); } catch { setResult('Error'); }
+                    } else {
+                        safeCalcEval(expression);
+                    }
+                });
+            } else if (action === 'sign') {
+                btn.addEventListener('click', (e) => { spawnRipple(e); toggleSignSafe(); });
+            } else if (action === 'sto') {
+                btn.addEventListener('click', () => {
+                    const candidates = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+                    const val = Number(resEl.textContent);
+                    if (!Number.isFinite(val)) { setResult('Warn: result not numeric'); return; }
+                    const pick = candidates[Math.floor(Math.random() * candidates.length)];
+                    memVars[pick] = val; lastStoredSym = pick; setResult(`${pick}=${val}`);
+                });
+            } else if (action === 'rcl') {
+                btn.addEventListener('click', () => {
+                    if (lastStoredSym) { appendToken(lastStoredSym); }
+                });
+            } else if (action === 'mplus') {
+                btn.addEventListener('click', (e) => { spawnRipple(e); const v = Number(resEl.textContent); if (Number.isFinite(v)) { MVal += v; setResult(`M=${MVal}`); } });
+            } else if (action === 'mminus') {
+                btn.addEventListener('click', (e) => { spawnRipple(e); const v = Number(resEl.textContent); if (Number.isFinite(v)) { MVal -= v; setResult(`M=${MVal}`); } });
+            } else if (action === 'putvar') {
+                btn.addEventListener('click', (e) => {
+                    spawnRipple(e);
+                    const v = Number(resEl.textContent);
+                    if (!Number.isFinite(v)) { setResult('Warn: result not numeric'); return; }
+                    const name = prompt('Store result into variable name (e.g., x):', 'x');
+                    if (name && /^[_a-zA-Z][_a-zA-Z0-9]*$/.test(name)) {
+                        userVars[name] = v; setResult(`${name}=${v}`);
+                    }
+                });
+            }
+        });
+
+        // Keyboard support
+        window.addEventListener('keydown', (e) => {
+            const k = e.key;
+            if (/^[0-9]$/.test(k)) { appendToken(k); return; }
+            if (/^[a-zA-Z_]$/.test(k)) { appendToken(k); return; }
+            if (k === '.') { appendToken('.'); return; }
+            if (['+', '-', '*', '/', '%', '^', '(', ')', ','].includes(k)) { appendToken(k); return; }
+            if (k === 'Enter' || k === '=') {
+                e.preventDefault();
+                if (isFunTheme()) {
+                    try { const shown = calcValueString(expression); animateThrowToResult(shown); } catch { setResult('Error'); }
+                } else {
+                    safeCalcEval(expression);
+                }
+                return;
+            }
+            if (k === 'Backspace') { deleteOne(); return; }
+        });
+
+        // Angle toggle
+        angleBtn?.addEventListener('click', () => { angleMode = angleMode === 'DEG' ? 'RAD' : 'DEG'; angleBtn.textContent = angleMode; angleBtn.title = 'Toggle angle mode'; });
+
+        // Tabs switching
+        document.querySelectorAll('.tab').forEach(t => {
+            t.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+                document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+                t.classList.add('active');
+                const id = t.getAttribute('data-panel');
+                document.getElementById(id)?.classList.add('active');
+                if (id === 'graphPanel') setTimeout(plot, 0);
+            });
+        });
+
+        // --- Graphing ---
+        const canvas = document.getElementById('graph');
+        const funcInput = document.getElementById('funcInput');
+        const xminEl = document.getElementById('xmin');
+        const xmaxEl = document.getElementById('xmax');
+        const plotBtn = document.getElementById('plotBtn');
+
+        function graphEvalFuncFactory(expr) {
+            const prepared = normalizeForEval(expr, true);
+            const { sin, cos, tan, csc, cot, sinh, cosh, tanh, PI, E } = makeScope();
+            // eslint-disable-next-line no-new-func
+            const f = Function('x', 'sin', 'cos', 'tan', 'csc', 'cot', 'sinh', 'cosh', 'tanh', 'PI', 'E', `"use strict"; return (${prepared});`);
+            return (x) => { try { return f(x, sin, cos, tan, csc, cot, sinh, cosh, tanh, PI, E); } catch { return NaN; } };
+        }
+
+        function plot() {
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const rect = canvas.getBoundingClientRect();
+            const dpr = Math.max(1, window.devicePixelRatio || 1);
+            canvas.width = Math.floor(rect.width * dpr);
+            canvas.height = Math.floor(rect.height * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.clearRect(0, 0, rect.width, rect.height);
+
+            const x0 = parseFloat(xminEl.value);
+            const x1 = parseFloat(xmaxEl.value);
+            if (!(x0 < x1)) { ctx.fillStyle = '#ffb4b4'; ctx.fillText('Invalid range', 10, 20); return; }
+            const f = graphEvalFuncFactory(funcInput.value);
+
+            const N = 800; const xs = []; const ys = [];
+            for (let i = 0; i <= N; i++) {
+                const x = x0 + (i / N) * (x1 - x0);
+                const y = f(x);
+                xs.push(x); ys.push(y);
+            }
+            const finite = ys.filter(v => Number.isFinite(v));
+            if (!finite.length) { ctx.fillStyle = '#ffb4b4'; ctx.fillText('No finite values to plot', 10, 20); return; }
+            let ymin = Math.min(...finite), ymax = Math.max(...finite);
+            if (ymin === ymax) { ymin -= 1; ymax += 1; }
+            const pad = 10; const W = rect.width, H = rect.height;
+            function sx(x) { return pad + (x - x0) * (W - 2 * pad) / (x1 - x0); }
+            function sy(y) { return H - pad - (y - ymin) * (H - 2 * pad) / (ymax - ymin); }
+            ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 1;
+            if (x0 < 0 && x1 > 0) { ctx.beginPath(); ctx.moveTo(sx(0), sy(ymin)); ctx.lineTo(sx(0), sy(ymax)); ctx.stroke(); }
+            if (ymin < 0 && ymax > 0) { ctx.beginPath(); ctx.moveTo(sx(x0), sy(0)); ctx.lineTo(sx(x1), sy(0)); ctx.stroke(); }
+            ctx.beginPath(); let started = false; ctx.strokeStyle = 'rgba(102,170,255,0.95)'; ctx.lineWidth = 2;
+            for (let i = 0; i <= N; i++) {
+                const y = ys[i]; if (!Number.isFinite(y)) { started = false; continue; }
+                const X = sx(xs[i]); const Y = sy(y);
+                if (!started) { ctx.moveTo(X, Y); started = true; } else { ctx.lineTo(X, Y); }
+            }
+            ctx.stroke();
+        }
+
+        plotBtn?.addEventListener('click', plot);
+        window.addEventListener('resize', () => { if (document.getElementById('graphPanel').classList.contains('active')) plot(); });
+
+        // --- Practice ---
+        const ptype = document.getElementById('ptype');
+        const newProb = document.getElementById('newProb');
+        const probText = document.getElementById('probText');
+        const answer = document.getElementById('answer');
+        const checkAns = document.getElementById('checkAns');
+        const feedback = document.getElementById('feedback');
+
+        let currentProblem = null; // {type, prompt, answer}
+
+        function randInt(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
+
+        function makeLinear() {
+            let a = randInt(1, 9); let b = randInt(-10, 10); let c = randInt(-10, 10);
+            const x = (c - b) / a; // ax + b = c
+            const prompt = `Solve for x: ${a}x ${b >= 0 ? '+' : ''}${b} = ${c}`;
+            return { type: 'linear', prompt, answer: x };
+        }
+        function makeQuadratic() {
+            let r1 = randInt(-5, 5); let r2 = randInt(-5, 5);
+            if (r1 === 0) r1 = 2; if (r2 === 0) r2 = -3; if (r1 === r2) r2 += 1;
+            const b = -(r1 + r2), c = r1 * r2; // x^2 + b x + c = 0
+            const prompt = `Solve x^2 ${b >= 0 ? '+' : ''}${b}x ${c >= 0 ? '+' : ''}${c} = 0  (roots)`;
+            return { type: 'quadratic', prompt, answer: [r1, r2] };
+        }
+        function makeWord() {
+            const v = randInt(20, 70); const t = randInt(1, 6); const d = v * t;
+            const prompt = `Word: A car travels at ${v} mph for ${t} hours. How far does it travel?`;
+            return { type: 'word', prompt, answer: d };
+        }
+
+        function newProblem() {
+            const t = ptype.value;
+            currentProblem = t === 'linear' ? makeLinear() : t === 'quadratic' ? makeQuadratic() : makeWord();
+            probText.textContent = currentProblem.prompt;
+            answer.value = '';
+            feedback.style.display = 'none';
+        }
+
+        function checkAnswer() {
+            if (!currentProblem) return;
+            const val = answer.value.trim();
+            let ok = false;
+            if (currentProblem.type === 'quadratic') {
+                const parts = val.split(/\s*,\s*/).map(Number).filter(n => Number.isFinite(n));
+                if (parts.length === 2) {
+                    const sorted = parts.slice().sort((a, b) => a - b);
+                    const target = currentProblem.answer.slice().sort((a, b) => a - b);
+                    ok = Math.abs(sorted[0] - target[0]) < 1e-6 && Math.abs(sorted[1] - target[1]) < 1e-6;
+                }
+            } else {
+                const num = Number(val);
+                if (Number.isFinite(num)) ok = Math.abs(num - Number(currentProblem.answer)) < 1e-6;
+            }
+            feedback.textContent = ok ? 'Correct' : `Try again`;
+            feedback.className = 'badge ' + (ok ? 'okBadge' : 'errBadge');
+            feedback.style.display = 'inline-block';
+        }
+
+        newProb?.addEventListener('click', newProblem);
+        checkAns?.addEventListener('click', checkAnswer);
+
+        // Init
+        clearAll();
+
+        // --- Convert: smallest known -> largest known ---
+        const convCat = document.getElementById('convCat');
+        const convAmount = document.getElementById('convAmount');
+        const convFromUnit = document.getElementById('convFromUnit');
+        const convToUnit = document.getElementById('convToUnit');
+        const convBtn = document.getElementById('convBtn');
+        const convOut = document.getElementById('convOut');
+
+        // Factors to/from SI base units; results use SI extremes (quetta) and Planck units
+        const PLANCK_LENGTH = 1.616255e-35; // m
+        const PLANCK_TIME = 5.391247e-44; // s
+        const PLANCK_MASS = 2.176434e-8; // kg
+        const PLANCK_AREA = PLANCK_LENGTH * PLANCK_LENGTH; // m^2
+        const PLANCK_VOLUME = PLANCK_LENGTH * PLANCK_LENGTH * PLANCK_LENGTH; // m^3
+        const PLANCK_ENERGY = 1.9561e9; // J (approx)
+
+        const convertDefs = {
+            length: {
+                name: 'Length', smallest: { name: 'Planck length (ℓₚ)', toSI: (v) => v * PLANCK_LENGTH }, largest: { name: 'quettameter (Qm)', fromSI: (x) => x / 1e30 }
+            },
+            time: {
+                name: 'Time', smallest: { name: 'Planck time (tₚ)', toSI: (v) => v * PLANCK_TIME }, largest: { name: 'quettasecond (Qs)', fromSI: (x) => x / 1e30 }
+            },
+            mass: {
+                name: 'Mass', smallest: { name: 'Planck mass (mₚ)', toSI: (v) => v * PLANCK_MASS }, largest: { name: 'quettagram (Qg)', fromSI: (x) => x / 1e27 }
+            },
+            energy: {
+                name: 'Energy', smallest: { name: 'Planck energy (Eₚ)', toSI: (v) => v * PLANCK_ENERGY }, largest: { name: 'quettajoule (QJ)', fromSI: (x) => x / 1e30 }
+            },
+            area: {
+                name: 'Area', smallest: { name: 'Planck area (ℓₚ²)', toSI: (v) => v * PLANCK_AREA }, largest: { name: 'Qm²', fromSI: (x) => x / 1e60 }
+            },
+            volume: {
+                name: 'Volume', smallest: { name: 'Planck volume (ℓₚ³)', toSI: (v) => v * PLANCK_VOLUME }, largest: { name: 'Qm³', fromSI: (x) => x / 1e90 }
+            },
+            data: {
+                name: 'Data', smallest: { name: 'bit (b)', toSI: (v) => v / 8 }, /* SI base here = byte for simplicity */
+                largest: { name: 'quettabyte (QB)', fromSI: (x) => x / 1e30 }
+            }
+        };
+
+        function refreshConvertLabels() {
+            const c = convertDefs[convCat.value];
+            if (!c) return;
+            convFromUnit.textContent = c.smallest.name;
+            convToUnit.textContent = c.largest.name;
+        }
+
+        function doConvert() {
+            const c = convertDefs[convCat.value];
+            if (!c) return;
+            const amt = Number(convAmount.value);
+            if (!Number.isFinite(amt)) { convOut.textContent = 'Enter a valid number'; return; }
+            const si = c.smallest.toSI(amt);
+            const res = c.largest.fromSI(si);
+            const shown = Number.isFinite(res) ? (Math.abs(res) < 1e-6 ? res.toExponential(6) : Math.round(res * 1e12) / 1e12) : String(res);
+            convOut.textContent = `${amt} ${c.smallest.name} = ${shown} ${c.largest.name}`;
+        }
+
+        convCat?.addEventListener('change', () => { refreshConvertLabels(); doConvert(); });
+        convBtn?.addEventListener('click', doConvert);
+        convAmount?.addEventListener('keydown', (e) => { if (e.key === 'Enter') doConvert(); });
+        refreshConvertLabels();
+
+        // Theme switching
+        const themes = ['robot', 'leaf', 'unsatisfying', 'satisfying', 'fun', 'colorful', 'glass', 'simplistic', 'epileptic', 'colorfulEpilepsy'];
+        let themeIndex = 0;
+
+        function sketchify(enable) {
+            const elems = document.querySelectorAll('.keypad button, .tab, .badge');
+            elems.forEach(el => {
+                if (enable) {
+                    // random corners and slight rotation
+                    const r = (a, b) => (Math.floor(a + Math.random() * (b - a))) + 'px';
+                    const rot = ((Math.random() - 0.5) * 1.6).toFixed(2) + 'deg';
+                    el.style.setProperty('--tl', r(6, 16));
+                    el.style.setProperty('--tr', r(6, 16));
+                    el.style.setProperty('--br', r(6, 16));
+                    el.style.setProperty('--bl', r(6, 16));
+                    el.style.setProperty('--rot', rot);
+                } else {
+                    el.style.removeProperty('--tl');
+                    el.style.removeProperty('--tr');
+                    el.style.removeProperty('--br');
+                    el.style.removeProperty('--bl');
+                    el.style.removeProperty('--rot');
+                }
+            });
+        }
+
+        function labelForTheme(name) {
+            const custom = { colorfulEpilepsy: 'Colorful Epilepsy' };
+            if (custom[name]) return custom[name];
+            // Split camelCase to words
+            const spaced = name.replace(/([a-z])([A-Z])/g, '$1 $2');
+            return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+        }
+
+        function showEpilepticConsent() {
+            const overlay = document.createElement('div'); overlay.className = 'modalOverlay';
+            overlay.innerHTML = `
+			<div class="modalBox">
+				<h3>Warning: Intense flashing & rapid motion</h3>
+			<p>This theme contains red/blue flashing backgrounds and fast spinning UI. It may trigger photosensitive epilepsy or discomfort. Proceed only if safe for you.</p>
+				<div class="row">
+			<button id="denyEpi" class="badge danger">Cancel</button>
+			<button id="allowEpi" class="badge accent">I understand, enable</button>
+			</div>
+			</div>`;
+            document.body.appendChild(overlay);
+            overlay.querySelector('#denyEpi').addEventListener('click', () => {
+                document.body.removeChild(overlay);
+                // Revert to previous safe theme
+                applyTheme('robot');
+            });
+            overlay.querySelector('#allowEpi').addEventListener('click', () => {
+                window.__epilepticOK = true;
+                document.body.removeChild(overlay);
+                applyTheme('epileptic');
+            });
+        }
+
+        function applyTheme(themeName) {
+            if (!themeName) themeName = themes[themeIndex % themes.length];
+            const name = themeName;
+            if (name === 'epileptic' && !window.__epilepticOK) { showEpilepticConsent(); return; }
+            if (name === 'colorfulEpilepsy' && !window.__colorEpiOK) {
+                const overlay = document.createElement('div'); overlay.className = 'modalOverlay';
+                overlay.innerHTML = `
+				<div class="modalBox">
+				<h3>Warning: Extreme flashing across all elements</h3>
+				<p>This theme rapidly cycles colors on every UI element and may cause discomfort or trigger photosensitive epilepsy.</p>
+				<div class="row">
+				<button id="denyColEpi" class="badge danger">Cancel</button>
+				<button id="allowColEpi" class="badge accent">I understand, enable</button>
+				</div>
+				</div>`;
+                document.body.appendChild(overlay);
+                overlay.querySelector('#denyColEpi').addEventListener('click', () => {
+                    document.body.removeChild(overlay);
+                    // skip this theme
+                    themeIndex = (themeIndex + 1) % themes.length; applyTheme();
+                });
+                overlay.querySelector('#allowColEpi').addEventListener('click', () => {
+                    window.__colorEpiOK = true;
+                    document.body.removeChild(overlay);
+                    applyTheme();
+                });
+                return;
+            }
+            document.body.classList.remove(...themes.map(t => 'theme-' + t));
+            document.body.classList.add('theme-' + name);
+            sketchify(name === 'unsatisfying');
+            // Update theme select if different
+            const themeSelect = document.getElementById('themeSelect');
+            if (themeSelect && themeSelect.value !== name) themeSelect.value = name;
+        }
+        applyTheme();
+
+        // --- Settings Modal ---
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsModal = document.getElementById('settingsModal');
+        const closeSettings = document.getElementById('closeSettings');
+        const themeSelect = document.getElementById('themeSelect');
+
+        settingsBtn?.addEventListener('click', () => { settingsModal.classList.add('active'); });
+        closeSettings?.addEventListener('click', () => { settingsModal.classList.remove('active'); });
+        settingsModal?.addEventListener('click', (e) => { if (e.target === settingsModal) settingsModal.classList.remove('active'); });
+
+        themeSelect?.addEventListener('change', () => { applyTheme(themeSelect.value); });
+
+        // --- Epilepsy Theme Customization ---
+        const epilepsyColor1Input = document.getElementById('epilepsyColor1');
+        const epilepsyColor2Input = document.getElementById('epilepsyColor2');
+        const epilepsySpeedInput = document.getElementById('epilepsySpeed');
+        const epilepsySpeedValue = document.getElementById('epilepsySpeedValue');
+        const epilepsyColorfulSpeedInput = document.getElementById('epilepsyColorfulSpeed');
+        const epilepsyColorfulSpeedValue = document.getElementById('epilepsyColorfulSpeedValue');
+
+        function updateEpilepsy() {
+            const c1 = epilepsyColor1Input?.value || '#ff0022';
+            const c2 = epilepsyColor2Input?.value || '#0033ff';
+            const speed = epilepsySpeedInput?.value || '200';
+            const colorfulSpeed = epilepsyColorfulSpeedInput?.value || '100';
+
+            document.documentElement.style.setProperty('--epilepsy-color1', c1);
+            document.documentElement.style.setProperty('--epilepsy-color2', c2);
+            document.documentElement.style.setProperty('--epilepsy-speed', speed + 'ms');
+            document.documentElement.style.setProperty('--epilepsy-colorful-speed', colorfulSpeed + 'ms');
+
+            if (epilepsySpeedValue) epilepsySpeedValue.textContent = speed + 'ms';
+            if (epilepsyColorfulSpeedValue) epilepsyColorfulSpeedValue.textContent = colorfulSpeed + 'ms';
+        }
+
+        epilepsyColor1Input?.addEventListener('input', updateEpilepsy);
+        epilepsyColor2Input?.addEventListener('input', updateEpilepsy);
+        epilepsySpeedInput?.addEventListener('input', updateEpilepsy);
+        epilepsyColorfulSpeedInput?.addEventListener('input', updateEpilepsy);
+
+        // Initialize epilepsy settings
+        updateEpilepsy();
+
+        // --- Multi-Color Gradient Picker ---
+        const calcEl = document.querySelector('.calc');
+        const solidModeSettings = document.getElementById('solidModeSettings');
+        const gradientModeSettings = document.getElementById('gradientModeSettings');
+        const bgAngleSettings = document.getElementById('bgAngleSettings');
+        const angleValueSettings = document.getElementById('angleValueSettings');
+        const colorStopsContainer = document.getElementById('colorStopsContainer');
+        const addColorStopBtn = document.getElementById('addColorStop');
+
+        let bgMode = 'gradient'; // 'solid' or 'gradient'
+        let colorStops = [
+            { color: '#0f1628', position: 0 },
+            { color: '#0d1426', position: 100 }
+        ];
+
+        function renderColorStops() {
+            colorStopsContainer.innerHTML = '';
+            colorStops.forEach((stop, idx) => {
+                const div = document.createElement('div');
+                div.className = 'colorStop';
+                div.innerHTML = `
+					<input type="color" value="${stop.color}" data-idx="${idx}" class="stopColor" />
+					<input type="range" min="0" max="100" step="1" value="${stop.position}" data-idx="${idx}" class="stopPosition" />
+					<span>${stop.position}%</span>
+					${colorStops.length > 2 ? `<button class="badge danger" data-idx="${idx}" class="removeStop">×</button>` : ''}
+				`;
+                colorStopsContainer.appendChild(div);
+            });
+
+            // Add event listeners
+            document.querySelectorAll('.stopColor').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    const idx = parseInt(e.target.dataset.idx);
+                    colorStops[idx].color = e.target.value;
+                    updateCalcBackground();
+                });
+            });
+            document.querySelectorAll('.stopPosition').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    const idx = parseInt(e.target.dataset.idx);
+                    colorStops[idx].position = parseInt(e.target.value);
+                    e.target.nextElementSibling.textContent = e.target.value + '%';
+                    updateCalcBackground();
+                });
+            });
+            document.querySelectorAll('.removeStop').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const idx = parseInt(e.target.dataset.idx);
+                    colorStops.splice(idx, 1);
+                    renderColorStops();
+                    updateCalcBackground();
+                });
+            });
+        }
+
+        function updateCalcBackground() {
+            const angle = bgAngleSettings.value + 'deg';
+            angleValueSettings.textContent = bgAngleSettings.value + '°';
+
+            if (bgMode === 'solid') {
+                calcEl.style.background = colorStops[0].color;
+            } else {
+                // Sort by position and build gradient
+                const sorted = [...colorStops].sort((a, b) => a.position - b.position);
+                const gradientStops = sorted.map(s => `${s.color} ${s.position}%`).join(', ');
+                calcEl.style.background = `linear-gradient(${angle}, ${gradientStops})`;
+            }
+        }
+
+        solidModeSettings?.addEventListener('click', () => {
+            bgMode = 'solid';
+            solidModeSettings.classList.add('active');
+            gradientModeSettings.classList.remove('active');
+            bgAngleSettings.style.display = 'none';
+            bgAngleSettings.previousElementSibling.style.display = 'none';
+            angleValueSettings.style.display = 'none';
+            updateCalcBackground();
+        });
+
+        gradientModeSettings?.addEventListener('click', () => {
+            bgMode = 'gradient';
+            gradientModeSettings.classList.add('active');
+            solidModeSettings.classList.remove('active');
+            bgAngleSettings.style.display = '';
+            bgAngleSettings.previousElementSibling.style.display = '';
+            angleValueSettings.style.display = '';
+            updateCalcBackground();
+        });
+
+        bgAngleSettings?.addEventListener('input', updateCalcBackground);
+
+        addColorStopBtn?.addEventListener('click', () => {
+            // Add new color stop in the middle
+            const newPos = colorStops.length > 0 ? Math.floor(colorStops.reduce((sum, s) => sum + s.position, 0) / colorStops.length) : 50;
+            colorStops.push({ color: '#6699ff', position: newPos });
+            renderColorStops();
+            updateCalcBackground();
+        });
+
+        // Initialize
+        renderColorStops();
+        updateCalcBackground();
+
+        // --- Zoom & Pan ---
+        const calcWrapper = document.getElementById('calcWrapper');
+        const zoomSlider = document.getElementById('zoomSlider');
+        const zoomValue = document.getElementById('zoomValue');
+        const resetZoom = document.getElementById('resetZoom');
+
+        let zoom = 1; // 1 to 1000
+        let panX = 0, panY = 0;
+        let isDragging = false;
+        let dragStartX = 0, dragStartY = 0;
+        let lastPanX = 0, lastPanY = 0;
+
+        // Convert slider (0-100) to zoom (1-1000) logarithmically
+        function sliderToZoom(val) {
+            // log scale: 1x at 0, 1000x at 100
+            return Math.pow(10, (val / 100) * 3); // 10^0 = 1, 10^3 = 1000
+        }
+
+        function zoomToSlider(z) {
+            return (Math.log10(z) / 3) * 100;
+        }
+
+        function applyTransform() {
+            calcWrapper.style.transform = `translate(${panX}px, ${panY}px) scale(${zoom})`;
+            zoomValue.textContent = zoom.toFixed(1) + 'x';
+            if (zoomSlider) zoomSlider.value = zoomToSlider(zoom);
+        }
+
+        zoomSlider?.addEventListener('input', () => {
+            zoom = sliderToZoom(parseFloat(zoomSlider.value));
+            applyTransform();
+        });
+
+        resetZoom?.addEventListener('click', () => {
+            zoom = 1;
+            panX = 0;
+            panY = 0;
+            applyTransform();
+        });
+
+        // Drag to pan
+        calcWrapper.addEventListener('mousedown', (e) => {
+            if (e.target.closest('button, input, select, a')) return;
+            isDragging = true;
+            dragStartX = e.clientX;
+            dragStartY = e.clientY;
+            lastPanX = panX;
+            lastPanY = panY;
+            calcWrapper.classList.add('dragging');
+            e.preventDefault();
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const dx = e.clientX - dragStartX;
+            const dy = e.clientY - dragStartY;
+            panX = lastPanX + dx;
+            panY = lastPanY + dy;
+            applyTransform();
+        });
+
+        window.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                calcWrapper.classList.remove('dragging');
+            }
+        });
+
+        // Pinch to zoom (touch)
+        let initialPinchDistance = 0;
+        let initialZoom = 1;
+
+        function getDistance(touch1, touch2) {
+            const dx = touch1.clientX - touch2.clientX;
+            const dy = touch1.clientY - touch2.clientY;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        calcWrapper.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                initialPinchDistance = getDistance(e.touches[0], e.touches[1]);
+                initialZoom = zoom;
+                e.preventDefault();
+            }
+        });
+
+        calcWrapper.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2) {
+                const currentDistance = getDistance(e.touches[0], e.touches[1]);
+                const scale = currentDistance / initialPinchDistance;
+                zoom = Math.max(1, Math.min(1000, initialZoom * scale));
+                applyTransform();
+                e.preventDefault();
+            }
+        });
+
+        // Mouse wheel zoom
+        calcWrapper.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? 0.9 : 1.1;
+            zoom = Math.max(1, Math.min(1000, zoom * delta));
+            applyTransform();
+        }, { passive: false });
+
+        applyTransform();
+    </script>
+</body>
+
+</html>
