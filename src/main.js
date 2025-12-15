@@ -1,5 +1,4 @@
 // Import the AppSettings.json file with correct case-sensitive path
-import React, { useState } from 'react';
 import APP_SETTINGS from './Config/AppSettings.json';
 
 // Import utility functions
@@ -33,52 +32,15 @@ export async function loadModeHTML(mode, settings, logFunction) {
     }
 }
 
-/*************  ✨ Windsurf Command 🌟  *************/
-
 /**
  * Main application logic.
  */
-export const StartApplication = () => {
-    const [mode, setMode] = React.useState('gamecenter');
-    const [initialized, setInitialized] = React.useState(false);
-
-    React.useEffect(() => {
-        const debugMode = APP_SETTINGS.app.debugMode;
-        const apiUrl = APP_SETTINGS.networking.apiBaseUrl;
-        log(`Debug Mode: ${debugMode}. API: ${apiUrl}`, 'CONFIG');
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const urlMode = urlParams.get('mode');
-        if (urlMode === 'workshop') {
-            setMode('workshop');
-        }
-
-        loadModeHTML(mode, APP_SETTINGS, log).then(() => {
-            setInitialized(true);
-        });
-    }, []);
-
-    return (
-        initialized ? (
-            <div>
-                <h1>Initialization Complete</h1>
-            </div>
-        ) : (
-            <div>
-                <h1>Initializing...</h1>
-            </div>
-        )
-    );
-};
-
 export async function startApplication() {
     log("Application starting up...", 'STARTUP');
 
     const debugMode = APP_SETTINGS.app.debugMode;
     const apiUrl = APP_SETTINGS.networking.apiBaseUrl;
     log(`Debug Mode: ${debugMode}. API: ${apiUrl}`, 'CONFIG');
-
-    await StartApplication();
 
     log("Initialization complete.", "STARTUP");
 }

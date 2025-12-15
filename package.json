@@ -6,19 +6,41 @@
   "main": "src/main.js",
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "start": "node src/main.js"
+    "start": "node src/main.js",
+    "dev": "webpack serve --mode development",
+    "build": "webpack --mode production",
+    "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
+    "lint:fix": "npm run lint -- --fix",
+    "prebuild": "npm run clean",
+    "test:watch": "jest --watch",
+    "deploy": "npm run build && scp dist/* user@server:/var/www",
+    "test:ci": "npm run check -- --coverage",
+    "check": "npm run lint && npm test",
+    "npm format": "prettier --write 'src /*.{js,jsx,ts,tsx,html,json,css,scss,md,yml,xml,yaml,svg,graphql,mdx,test.js,test.jsx}"
   },
   "dependencies": {
+    "axios": "^1.13.2",
+    "day": "^0.0.2",
+    "express.js": "^1.0.0",
+    "fastify": "^5.6.2",
+    "flow": "^0.2.3",
+    "jsx": "^0.9.89",
+    "lodash": "^4.17.21",
+    "prettier": "^3.7.4",
     "python3": "^0.0.1",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
-    "stylus": "^0.64.0"
+    "stylus": "^0.64.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.0",
+    "zod": "^4.2.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.28.3",
+    "@babel/core": "^7.28.5",
     "@babel/preset-env": "^7.28.5",
     "@babel/preset-react": "^7.28.5",
     "@playwright/test": "^1.57.0",
-    "playwright": "^1.57.0",
     "babel-jest": "^30.2.0",
     "eslint": "^8.57.1",
     "eslint-config-airbnb": "^19.0.4",
@@ -26,7 +48,8 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
     "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0"
+    "jest-environment-jsdom": "^29.7.0",
+    "playwright": "^1.57.0"
   },
   "jest": {
     "testEnvironment": "jsdom",

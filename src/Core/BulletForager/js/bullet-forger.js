@@ -324,7 +324,7 @@ class BulletForger {
         <button class="forger-btn speed-btn" data-action="customize-speed">⚡ Customize Speed</button>
       </div>
     `;
-    
+
     container.appendChild(workflowPanel);
     this.attachWorkflowEvents(workflowPanel);
   }
@@ -340,7 +340,7 @@ class BulletForger {
   }
 
   handleWorkflowAction(action) {
-    switch(action) {
+    switch (action) {
       case 'import':
         this.showImportDialog();
         break;
@@ -379,19 +379,19 @@ class BulletForger {
     const paramPanel = document.createElement('div');
     paramPanel.className = 'parameter-panel';
     paramPanel.id = 'parameter-panel';
-    
+
     const categories = this.getParameterCategories();
     let html = '<h3>Bullet Parameters (200+)</h3><div class="param-categories">';
-    
+
     for (const [category, params] of Object.entries(categories)) {
       html += `<div class="param-category">
         <h4>${category}</h4>
         <div class="param-inputs">`;
-      
+
       params.forEach(param => {
         const value = this.currentBullet[param.key];
         const inputId = `param-${param.key}`;
-        
+
         if (param.type === 'number') {
           html += `
             <div class="param-item">
@@ -423,10 +423,10 @@ class BulletForger {
           html += `</select></div>`;
         }
       });
-      
+
       html += '</div></div>';
     }
-    
+
     html += '</div>';
     paramPanel.innerHTML = html;
     container.appendChild(paramPanel);
@@ -436,18 +436,18 @@ class BulletForger {
   attachParameterEvents() {
     const paramPanel = document.getElementById('parameter-panel');
     const inputs = paramPanel.querySelectorAll('input, select');
-    
+
     inputs.forEach(input => {
       input.addEventListener('change', (e) => {
         const param = e.target.dataset.param;
         let value = e.target.value;
-        
+
         if (e.target.type === 'checkbox') {
           value = e.target.checked;
         } else if (e.target.type === 'number') {
           value = parseFloat(value);
         }
-        
+
         this.currentBullet[param] = value;
         this.updatePreview();
     });
@@ -463,7 +463,7 @@ getParameterCategories() {
         { key: 'bulletSpeed', label: 'Speed', type: 'number', min: 0, max: 50, step: 0.5 },
         { key: 'fireRate', label: 'Fire Rate', type: 'number', min: 10, max: 500, step: 1 },
             { key: 'bulletSize', label: 'Size (W x H)', type: 'text' }
-        
+
     ],
     'Spread & Patterns': [
         { key: 'spread', label: 'Spread Angle', type: 'number', min: 0, max: 360, step: 1 },
@@ -518,7 +518,7 @@ getParameterCategories() {
     const editorPanel = document.createElement('div');
     editorPanel.className = 'code-editor-panel';
     editorPanel.id = 'code-editor';
-    
+
     editorPanel.innerHTML = `
       <h3>Code Editor (Line-by-Line)</h3>
       <div class="editor-toolbar">
@@ -530,7 +530,7 @@ getParameterCategories() {
       <textarea id="bullet-code" class="code-textarea" placeholder="// Edit bullet configuration as JSON or JavaScript&#10;const bullet = {&#10;  name: 'My Bullet',&#10;  damage: 50&#10;};"></textarea>
       <div id="code-errors" class="code-errors"></div>
     `;
-    
+
     container.appendChild(editorPanel);
     this.attachCodeEditorEvents();
   }
@@ -541,7 +541,7 @@ getParameterCategories() {
     const addLineBtn = document.getElementById('add-line');
     const deleteLineBtn = document.getElementById('delete-line');
     const codeArea = document.getElementById('bullet-code');
-    
+
     applyBtn?.addEventListener('click', () => this.applyCode());
     validateBtn?.addEventListener('click', () => this.validateCode());
     addLineBtn?.addEventListener('click', () => this.addCodeLine());
@@ -552,7 +552,7 @@ getParameterCategories() {
     const codeArea = document.getElementById('bullet-code');
     const code = codeArea.value;
     const errorDiv = document.getElementById('code-errors');
-    
+
     try {
       const bullet = eval(`(${code})`);
       this.currentBullet = { ...this.currentBullet, ...bullet };
@@ -569,7 +569,7 @@ getParameterCategories() {
     const codeArea = document.getElementById('bullet-code');
     const code = codeArea.value;
     const errorDiv = document.getElementById('code-errors');
-    
+
     try {
       eval(`(${code})`);
       errorDiv.textContent = '✓ Code is valid';
@@ -597,7 +597,7 @@ getParameterCategories() {
     const blockPanel = document.createElement('div');
     blockPanel.className = 'block-coder-panel';
     blockPanel.id = 'block-coder';
-    
+
     blockPanel.innerHTML = `
       <h3>Visual Block Coder</h3>
       <div class="block-toolbar">
@@ -613,7 +613,7 @@ getParameterCategories() {
       </div>
       <button class="block-btn" id="compile-blocks">🔨 Compile Blocks</button>
     `;
-    
+
     container.appendChild(blockPanel);
     this.attachBlockCoderEvents();
   }
@@ -621,14 +621,14 @@ getParameterCategories() {
   attachBlockCoderEvents() {
     const blockBtns = document.querySelectorAll('.block-btn[data-block]');
     const compileBtn = document.getElementById('compile-blocks');
-    
+
     blockBtns.forEach(btn => {
       btn.addEventListener('click', (e) => {
         const blockType = e.target.dataset.block;
         this.addBlockToCanvas(blockType);
       });
     });
-    
+
     compileBtn?.addEventListener('click', () => this.compileBlocks());
   }
 
@@ -637,7 +637,7 @@ getParameterCategories() {
     const block = document.createElement('div');
     block.className = 'block';
     block.draggable = true;
-    
+
     const blockConfigs = {
       damage: { label: 'Damage', params: ['amount', 'type'] },
       effect: { label: 'Effect', params: ['burn', 'freeze', 'poison'] },
@@ -646,7 +646,7 @@ getParameterCategories() {
       trigger: { label: 'Trigger', params: ['onHit', 'onExplode'] },
       combo: { label: 'Combo', params: ['chain1', 'chain2'] }
     };
-    
+
     const config = blockConfigs[blockType];
     block.innerHTML = `
       <div class="block-header">${config.label}</div>
@@ -655,20 +655,20 @@ getParameterCategories() {
       </div>
       <button class="block-delete">✕</button>
     `;
-    
+
     block.addEventListener('dragstart', (e) => {
       e.dataTransfer.effectAllowed = 'move';
     });
-    
+
     block.querySelector('.block-delete')?.addEventListener('click', () => block.remove());
-    
+
     canvas.appendChild(block);
   }
 
   compileBlocks() {
     const blocks = document.querySelectorAll('.block');
     const config = {};
-    
+
     blocks.forEach(block => {
       const header = block.querySelector('.block-header').textContent;
       const params = block.querySelectorAll('.param input');
@@ -676,7 +676,7 @@ getParameterCategories() {
         config[input.previousSibling.textContent.split(':')[0]] = input.value;
       });
     });
-    
+
     this.currentBullet = { ...this.currentBullet, ...config };
     this.updatePreview();
   }
@@ -745,7 +745,7 @@ getParameterCategories() {
     const dialog = document.createElement('div');
     dialog.className = 'template-dialog';
     dialog.innerHTML = '<h3>Select Template</h3><div class="template-list">';
-    
+
     for (const [key, template] of Object.entries(this.templates)) {
       dialog.querySelector('.template-list').innerHTML += `
         <button class="template-option" data-template="${key}" style="background: ${template.color}">
@@ -753,9 +753,9 @@ getParameterCategories() {
         </button>
       `;
     }
-    
+
     document.body.appendChild(dialog);
-    
+
     dialog.querySelectorAll('.template-option').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const key = e.target.dataset.template;
@@ -787,7 +787,7 @@ getParameterCategories() {
     const dialog = document.createElement('div');
     dialog.className = 'abilities-dialog';
     dialog.innerHTML = '<h3>Bullet Abilities</h3><div class="ability-list">';
-    
+
     abilities.forEach(ability => {
       const enabled = this.currentBullet[ability];
       dialog.querySelector('.ability-list').innerHTML += `
@@ -797,10 +797,10 @@ getParameterCategories() {
         </label>
       `;
     });
-    
+
     dialog.innerHTML += '<button class="confirm-btn">✓ Apply</button>';
     document.body.appendChild(dialog);
-    
+
     dialog.querySelector('.confirm-btn').addEventListener('click', () => {
       dialog.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
         this.currentBullet[checkbox.dataset.ability] = checkbox.checked;
@@ -815,7 +815,7 @@ getParameterCategories() {
     const dialog = document.createElement('div');
     dialog.className = 'speed-dialog';
     dialog.innerHTML = '<h3>Bullet Speed</h3><div class="speed-list">';
-    
+
     speedOptions.forEach(speed => {
       dialog.querySelector('.speed-list').innerHTML += `
         <button class="speed-option" data-speed="${speed}">
@@ -823,9 +823,9 @@ getParameterCategories() {
         </button>
       `;
     });
-    
+
     document.body.appendChild(dialog);
-    
+
     dialog.querySelectorAll('.speed-option').forEach(btn => {
       btn.addEventListener('click', (e) => {
         this.currentBullet.bulletSpeed = parseFloat(e.target.dataset.speed);

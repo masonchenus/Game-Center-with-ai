@@ -14675,7 +14675,7 @@
                                 createParticles(boss.x + boss.width / 2, boss.y + boss.height / 2, 8, '#ff00ff', 3);
 
                                 if (b.breakApart && !b.isBreakBullet) {
-                                    for (let br = 0; br < 16; br++) {
+                                    for (let br = 0; br < 64; br++) {
                                         const offsetX = (br % 4) * (b.width / 2) - (3 * b.width / 4);
                                         const offsetY = Math.floor(br / 4) * (b.height / 2) - (1.5 * b.height);
                                         const breakDamage = b.damage * (1 - b.breakDamageReduction);

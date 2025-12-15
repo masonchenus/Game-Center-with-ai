@@ -78,7 +78,7 @@ class GameEngine {
         this.renderUI();
     }
 
-    
+
 
     updateUI() {
         // Update UI elements
