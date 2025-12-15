@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { log } from '../shared/utils.js';
+import { log } from '../Shared/utils.js';
 
 // Mock the fetch function
 global.fetch = jest.fn();
@@ -29,7 +29,11 @@ global.window = {
 };
 
 // Import the functions to test
-import { loadModeHTML, startApplication } from '../main.js';
+import { startApplication } from '../main.js';
+jest.mock('../main.js', () => ({
+    ...jest.requireActual('../main.js'),
+    loadModeHTML: jest.fn(),
+}));
 
 describe('loadModeHTML', () => {
     beforeEach(() => {

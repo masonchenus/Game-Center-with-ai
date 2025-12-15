@@ -14240,7 +14240,7 @@
                             const dx = b.target.x - b.x;
                             const dy = b.target.y - b.y;
                             const dist = Math.hypot(dx, dy);
-                            if (dist > 0) {
+                            if (dist > 1) {
                                 b.x += (dx / dist) * b.speed;
                                 b.y += (dy / dist) * b.speed;
                             }
@@ -14254,7 +14254,7 @@
                                 const dx = b.vortexCenter.x - b.x;
                                 const dy = b.vortexCenter.y - b.y;
                                 const dist = Math.hypot(dx, dy);
-                                if (dist > 0) {
+                                if (dist > 1) {
                                     b.vx += (dx / dist) * b.vortexStrength * 2;
                                     b.vy += (dy / dist) * b.vortexStrength * 2;
                                 }
@@ -14264,7 +14264,7 @@
                                 const dx = centerX - b.x;
                                 const dy = centerY - b.y;
                                 const dist = Math.hypot(dx, dy);
-                                if (dist < b.singularityRadius && dist > 0) {
+                                if (dist < b.singularityRadius && dist > 1) {
                                     b.vx += (dx / dist) * b.singularityPull;
                                     b.vy += (dy / dist) * b.singularityPull;
                                 }
