@@ -5,6 +5,7 @@ class BulletForger {
     this.history = [];
     this.blockProgram = [];
     this.bulletLibrary = [];
+    this.loadBulletFromLibrary();
     this.initializeUI();
   }
 
@@ -300,6 +301,7 @@ class BulletForger {
 
   initializeUI() {
     this.createMainWorkflow();
+    this.createPresetPanel();
     this.createParameterPanel();
     this.createCodeEditor();
     this.createBlockCoder();
@@ -374,6 +376,48 @@ class BulletForger {
     }
   }
 
+  createPresetPanel() {
+    const container = document.getElementById('bullet-forger-container');
+    const presetPanel = document.createElement('div');
+    presetPanel.className = 'preset-panel';
+    presetPanel.id = 'preset-panel';
+
+    let html = '<h3>Weapon Presets</h3><div class="preset-buttons">';
+    for (const key in weaponPresets) {
+      const preset = weaponPresets[key];
+      html += `<button class="forger-btn preset-btn" data-preset="${key}">${preset.name}</button>`;
+    }
+    html += '</div>';
+
+    presetPanel.innerHTML = html;
+    container.appendChild(presetPanel);
+    this.attachPresetEvents(presetPanel);
+  }
+
+  attachPresetEvents(panel) {
+    const buttons = panel.querySelectorAll('.preset-btn');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const presetKey = e.target.dataset.preset;
+        this.loadPreset(weaponPresets[presetKey]);
+      });
+    });
+  }
+
+  loadPreset(presetData) {
+    this.currentBullet = { ...this.createDefaultBullet(), ...presetData };
+    this.updateParameterPanel();
+    this.updatePreview();
+  }
+
+  updateParameterPanel() {
+      const oldPanel = document.getElementById('parameter-panel');
+      if (oldPanel) {
+          oldPanel.remove();
+      }
+      this.createParameterPanel();
+  }
+
   createParameterPanel() {
     const container = document.getElementById('bullet-forger-container');
     const paramPanel = document.createElement('div');
@@ -392,7 +436,14 @@ class BulletForger {
         const value = this.currentBullet[param.key];
         const inputId = `param-${param.key}`;
 
-        if (param.type === 'number') {
+        if (param.type === 'dimensions') {
+          html += `
+            <div class="param-item">
+              <label for="${inputId}-w">${param.label}:</label>
+              <input type="number" id="${inputId}-w" data-param-part="w" data-param="bulletSize" value="${value.w}" style="width: 50px;">
+              <input type="number" id="${inputId}-h" data-param-part="h" data-param="bulletSize" value="${value.h}" style="width: 50px;">
+            </div>`;
+        } else if (param.type === 'number') {
           html += `
             <div class="param-item">
               <label for="${inputId}">${param.label}:</label>
@@ -440,6 +491,7 @@ class BulletForger {
     inputs.forEach(input => {
       input.addEventListener('change', (e) => {
         const param = e.target.dataset.param;
+        const paramPart = e.target.dataset.paramPart;
         let value = e.target.value;
 
         if (e.target.type === 'checkbox') {
@@ -447,12 +499,16 @@ class BulletForger {
         } else if (e.target.type === 'number') {
           value = parseFloat(value);
         }
-
-        this.currentBullet[param] = value;
+        if (paramPart) {
+          this.currentBullet[param][paramPart] = value;
+        }
+        else {
+          this.currentBullet[param] = value;
+        }
         this.updatePreview();
+      });
     });
-    });
-}
+  }
 
 getParameterCategories() {
     return {
@@ -462,8 +518,7 @@ getParameterCategories() {
         { key: 'damage', label: 'Damage', type: 'number', min: 0, max: 500, step: 1 },
         { key: 'bulletSpeed', label: 'Speed', type: 'number', min: 0, max: 50, step: 0.5 },
         { key: 'fireRate', label: 'Fire Rate', type: 'number', min: 10, max: 500, step: 1 },
-            { key: 'bulletSize', label: 'Size (W x H)', type: 'text' }
-
+        { key: 'bulletSize', label: 'Size (W x H)', type: 'dimensions' }
     ],
     'Spread & Patterns': [
         { key: 'spread', label: 'Spread Angle', type: 'number', min: 0, max: 360, step: 1 },
@@ -714,9 +769,23 @@ getParameterCategories() {
   }
 
   saveBulletToLibrary() {
-    this.bulletLibrary.push({ ...this.currentBullet });
-    localStorage.setItem('bulletLibrary', JSON.stringify(this.bulletLibrary));
-    alert(`✓ Saved: ${this.currentBullet.name}`);
+    const name = prompt("Enter a name for your bullet:", this.currentBullet.name);
+    if (name) {
+      this.currentBullet.name = name;
+      const existingIndex = this.bulletLibrary.findIndex(b => b.name === name);
+      if (existingIndex > -1) {
+        this.bulletLibrary[existingIndex] = { ...this.currentBullet };
+      } else {
+        this.bulletLibrary.push({ ...this.currentBullet });
+      }
+      localStorage.setItem('bulletLibrary', JSON.stringify(this.bulletLibrary));
+      alert(`✓ Saved: ${this.currentBullet.name}`);
+    }
+  }
+
+  loadBulletFromLibrary() {
+    const savedBullets = JSON.parse(localStorage.getItem('bulletLibrary') || '[]');
+    this.bulletLibrary = savedBullets;
   }
 
   exportBullet() {

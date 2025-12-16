@@ -14,4 +14,31 @@
 font-family {
     font-family: 'Roboto', sans-serif;
 }
+.preset-panel {
+  margin-bottom: 20px;
+}
+
+.preset-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-height: 200px; /* Adjust as needed */
+  overflow-y: auto;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.preset-btn {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.preset-btn:hover {
+  background-color: #e0e0e0;
+}
 @import url('https://fonts.googleapis.com/css?family=Roboto');
