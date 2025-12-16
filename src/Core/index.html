@@ -4312,6 +4312,12 @@
     <!-- Gamertag Display -->
     <div class="gamertagDisplay empty" id="gamertagDisplay"></div>
 
+    <div id="bulletSelectionMenu" style="display: none; position: absolute; top: 100px; left: 150px; background: #333; padding: 20px; border: 2px solid #fff; z-index: 100;">
+        <h3>Select a Bullet</h3>
+        <div id="bulletList"></div>
+        <button id="closeBulletMenu">Close</button>
+    </div>
+
     <button id="epilepsyToggle" class="epilepsyBtn" title="Toggle epilepsy background">⚠️ Epilepsy</button>
     <!-- Global Settings Button -->
     <button id="settingsBtn" class="settingsBtn" title="Open settings">⚙ Settings</button>
@@ -15168,6 +15174,12 @@
                     ctx.fillText(`Weapon: ${weapons[currentWeapon].name}`, 10, 85);
                     ctx.fillText(`Kills: ${totalKills} | Shots: ${totalShotsFired}`, 10, 100);
 
+                    // Display Current Bullet Name
+                    const currentBulletName = weapons[currentWeapon].name || 'Normal';
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 14px Arial';
+                    ctx.fillText(`Bullet: ${currentBulletName}`, 300, 25);
+
                     // Weapon indicator
                     ctx.fillStyle = weapons[currentWeapon].color;
                     ctx.font = 'bold 12px Arial';
@@ -15247,6 +15259,47 @@
             update();
         }
 
+        window.addEventListener('keydown', (e) => {
+            if (e.shiftKey && e.key === 'P') {
+                const bulletMenu = document.getElementById('bulletSelectionMenu');
+                if (bulletMenu.style.display === 'none') {
+                    bulletMenu.style.display = 'block';
+                    gameRunning = false; // Pause the game
+                    populateBulletMenu();
+                } else {
+                    bulletMenu.style.display = 'none';
+                    gameRunning = true; // Unpause the game
+                    update();
+                }
+            }
+        });
+
+        document.getElementById('closeBulletMenu').addEventListener('click', () => {
+            const bulletMenu = document.getElementById('bulletSelectionMenu');
+            bulletMenu.style.display = 'none';
+            gameRunning = true; // Unpause the game
+            update();
+        });
+
+        function populateBulletMenu() {
+            const bulletList = document.getElementById('bulletList');
+            bulletList.innerHTML = '';
+            const savedBullets = JSON.parse(localStorage.getItem('bulletLibrary') || '[]');
+            savedBullets.forEach(bullet => {
+                const button = document.createElement('button');
+                button.textContent = bullet.name;
+                button.onclick = () => {
+                    const customWeaponKey = 'custom_' + bullet.name.replace(/\s+/g, '');
+                    weapons[customWeaponKey] = bullet;
+                    currentWeapon = customWeaponKey;
+                    const bulletMenu = document.getElementById('bulletSelectionMenu');
+                    bulletMenu.style.display = 'none';
+                    gameRunning = true; // Unpause the game
+                    update();
+                };
+                bulletList.appendChild(button);
+            });
+        }
         // Mega Game event listeners
         document.getElementById('megaLives3')?.addEventListener('click', () => {
             document.getElementById('megagameMenu').style.display = 'none';
