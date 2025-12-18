@@ -12802,8 +12802,7 @@
                     damage: 1155,
                     bulletSpeed: 12,
                     bulletSize: { w: 4, h: 10 },
-                    spread: 0,
-                    description: 'Standard rapid fire'
+                    description: 'Standard rapid fire',
                 },
                 boost: {
                     name: 'Boost',
@@ -12812,7 +12811,8 @@
                     damage: 40000,
                     bulletSpeed: 10,
                     bulletSize: { w: 3, h: 8 },
-                    spread: 0,
+                    spread: 1,
+                    rayCount: 600,
                     description: 'Ultra high fire rate & concentrated stream of bullets'
                 },
                 spreadshot: {
@@ -13513,13 +13513,13 @@
                 iceburst: {
                     name: 'Ice Burst',
                     color: '#00d4ff',
-                    fireRate: 175,
+                    fireRate: 25,
                     damage: 80,
                     bulletSpeed: 11,
                     bulletSize: { w: 6, h: 8 },
-                    spread: 0,
+                    spread: Math.ceil(Math.floor() * 360),
                     freeze: true,
-                    freezeDuration: 2000,
+                    freezeDuration: 20000,
                     description: 'Freezes enemies in place'
                 },
                 inferno: {
@@ -13580,25 +13580,25 @@
                     icon: '🛡️',
                     duration: 1000000,
                     active: false,
-                    effect: () => { player.shield = player.shieldMax; }
+                    effect: () => { player.shield = player.shieldMax * 4000; }
                 },
                 speedBoost: {
                     name: 'Speed',
                     icon: '⚡️',
-                    duration: 8000,
+                    duration: 80000,
                     active: false,
-                    effect: () => { player.speed * 20 }
+                    effect: () => { player.speed * 90 }
                 },
                 damageBoost: {
                     name: 'Damage',
                     icon: '💥',
-                    duration: 10000,
-                    active: false, effect: () => { player.damageMultiplier = 10; player.damage * 2; player.damageBoost = 100 }
+                    duration: 300000,
+                    active: false, effect: () => { player.damageMultiplier = 100; player.damage * 5; player.damageBoost = 9000 }
                 },
                 fireRateBoost: {
                     name: 'Rapid Fire',
                     icon: '🔥',
-                    duration: 80000,
+                    duration: 800000,
                     active: false, effect: () => { player.fireRateBoost = 15 }
                 },
                 invincibility: {
@@ -13757,7 +13757,7 @@
                     symbol: '⏰',
                     width: 95,
                     height: 60,
-                    maxHealth: 580000,
+                    maxHealth: 58000005,
                     color: '#ffff00',
                     speed: 1.2,
                     patterns: ['ring', 'burst', 'waves'],
@@ -13781,7 +13781,7 @@
                     symbol: '🌪',
                     width: 95,
                     height: 65,
-                    maxHealth: 7500249,
+                    maxHealth: 7500249025,
                     color: '#00ffff',
                     speed: 1.5,
                     patterns: ['vortex', 'iceburst'],
@@ -13817,7 +13817,7 @@
                     symbol: '🌪',
                     width: 95,
                     height: 65,
-                    maxHealth: 171252554,
+                    maxHealth: 1712525545,
                     color: '#00ffff',
                     speed: 1.5,
                     patterns: ['iceburst', 'inferno'],
@@ -13829,7 +13829,7 @@
                     symbol: '💥',
                     width: 90,
                     height: 65,
-                    maxHealth: 7500023540,
+                    maxHealth: 750002354005,
                     color: '#3333ff',
                     speed: 1.8,
                     patterns: ['voidrift', 'darkmatter'],
@@ -14050,7 +14050,7 @@
                                 width: currentWep.bulletSize.w,
                                 height: currentWep.bulletSize.h,
                                 target: nearestEnemy,
-                                damage: currentWep.damage * damageMultiplier,
+                                damage: currentWep.damage * damageMultiplier ** 5,
                                 type: 'plasma',
                                 speed: currentWep.bulletSpeed,
                                 tracking: true
@@ -14066,8 +14066,9 @@
                                 damage: currentWep.damage * damageMultiplier,
                                 type: 'missile',
                                 explosive: true,
-                                explosionRadius: 80,
-                                exploded: false
+                                explosionRadius: 90 * damageMultiplier,
+                                exploded: false,
+                                tracking: true
                             });
                         } else if (currentWeapon === 'laser') {
                             bullets.push({
@@ -14077,10 +14078,10 @@
                                 height: currentWep.bulletSize.h,
                                 vx: 0,
                                 vy: -currentWep.bulletSpeed,
-                                damage: currentWep.damage * damageMultiplier,
+                                damage: currentWep.damage * damageMultiplier ** 5,
                                 type: 'laser',
                                 piercing: true,
-                                pierceCount: 100
+                                pierceCount: 10000
                             });
                         } else if (currentWeapon === 'chaos') {
                             currentWep.effect(currentWep, now);
@@ -14095,7 +14096,8 @@
                                 damage: currentWep.damage * damageMultiplier,
                                 type: 'Ice Burst',
                                 piercing: true,
-                                pierceCount: 100
+                                pierceCount: 100,
+                                firerate: 240
                             })
                         }
 
