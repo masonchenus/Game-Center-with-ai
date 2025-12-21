@@ -12,6 +12,5 @@ def run(input_data="[<input_data>]", user_id="[<user_id>]", session_id="[<sessio
     prompt = f"Create a coding challenge for: {input_data}"
     return model.generate(prompt, user_id=user_id, session_id=session_id)
 
-
 def coding_challenge(prompt: str) -> str:
     return f"[Coding Challenge Mode] Generated challenge for: {prompt}"

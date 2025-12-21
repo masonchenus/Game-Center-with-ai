@@ -14,4 +14,4 @@ def run(input_data="[<input_data>]", user_id="[<user_id>]", session_id="[<sessio
 
 
 def cheat_sheet(prompt: str) -> str:
-    return f"[Cheat-Sheet Mode] Created cheat sheet: {prompt}"
+    return f'[Cheat-Sheet Mode] Created cheat sheet for "{prompt}"'

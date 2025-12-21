@@ -6,6 +6,7 @@ class ChatGPTModel:
         self.api_key = os.getenv("OPENAI_API_KEY")
         if not self.api_key:
             raise ValueError("OPENAI_API_KEY not found in environment")
+            print("OPENAI_API_KEY not found in environment")
         openai.api_key = self.api_key
 
     def generate(self, prompt: str) -> str:

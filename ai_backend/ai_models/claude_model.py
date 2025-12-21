@@ -6,6 +6,7 @@ class ClaudeModel:
         self.api_key = os.getenv("CLAUDE_API_KEY")
         if not self.api_key:
             raise ValueError("CLAUDE_API_KEY not found in environment")
+            print("CLAUDE_API_KEY not found in environment")
         self.base_url = "https://api.anthropic.com/v1"
 
     def generate(self, prompt: str, max_tokens: int = 200) -> str:

@@ -4312,7 +4312,8 @@
     <!-- Gamertag Display -->
     <div class="gamertagDisplay empty" id="gamertagDisplay"></div>
 
-    <div id="bulletSelectionMenu" style="display: none; position: absolute; top: 100px; left: 150px; background: #333; padding: 20px; border: 2px solid #fff; z-index: 100;">
+    <div id="bulletSelectionMenu"
+        style="display: none; position: absolute; top: 100px; left: 150px; background: #333; padding: 20px; border: 2px solid #fff; z-index: 100;">
         <h3>Select a Bullet</h3>
         <div id="bulletList"></div>
         <button id="closeBulletMenu">Close</button>
@@ -6856,7 +6857,7 @@
         });
 
         // Game card click handlers
-        document.querySelectorAll('.gameCard').forEach(card => {
+        document.querySelectorAll('.gameCard').forEach(card =>
             card.addEventListener('click', () => {
                 const game = card.getAttribute('data-game');
                 startScreen.style.display = 'none';
@@ -7082,7 +7083,7 @@
                     initMineslide();
                 } else if (game === 'moneystack') {
                     moneystackView.classList.add('active');
-                    initMoneystack();
+                    initMoneyStack();
                 } else if (game === 'moonbase') {
                     moonbaseView.classList.add('active');
                     initMoonbase();
@@ -7169,9 +7170,9 @@
                     initWordscramble();
                 } else if (game === 'zombierunner') {
                     zombierunnerView.classList.add('active');
+                    initZombierunner();
                 }
             });
-        });
 
         // Back to home handlers
         document.querySelectorAll('.backToHome').forEach(btn => {
@@ -10247,6 +10248,7 @@
         // ========== END DRAWING STUDIO ==========
 
         // ========== STOPWATCH ==========
+        //initStopwatch()
         let stopwatchRunning = false;
         let stopwatchStartTime = 0;
         let stopwatchElapsed = 0;
@@ -10540,7 +10542,7 @@
                 drawExplosion(explosionX, explosionY);
 
                 currentExplosion++;
-            }, 40);
+            }, 400);
         }
 
         function drawExplosion(x, y) {
@@ -12889,26 +12891,26 @@
                     icon: '🌪️',
                     color: () => {
                         const colors = [
-                        '#ff00ff', 
-                        '#00ff00', 
-                        '#ffff00', 
-                        '#ff0000', 
-                        '#00ffff', 
-                        '#ff6600', 
-                        '#00ff99', 
-                        '#ff1493', 
-                        '#00ced1', 
-                        '#32cd32', 
-                        '#ff4500', 
-                        '#1e90ff', 
-                        '#ffd700', 
-                        '#ff69b4', 
-                        '#00bfff', 
-                        '#7fff00', 
-                        '#adff2f', 
-                        '#ff7f50', 
-                        '#dc143c', 
-                        '#00008b',
+                            '#ff00ff',
+                            '#00ff00',
+                            '#ffff00',
+                            '#ff0000',
+                            '#00ffff',
+                            '#ff6600',
+                            '#00ff99',
+                            '#ff1493',
+                            '#00ced1',
+                            '#32cd32',
+                            '#ff4500',
+                            '#1e90ff',
+                            '#ffd700',
+                            '#ff69b4',
+                            '#00bfff',
+                            '#7fff00',
+                            '#adff2f',
+                            '#ff7f50',
+                            '#dc143c',
+                            '#00008b',
                         ];
                         return colors[Math.floor(Math.random() * colors.length)];
                     },
@@ -12931,7 +12933,7 @@
                     randomSpread: () => Math.floor(Math.random() * 360),
                     randomTracking: () => Math.random() > 0.8,
                     randomSpin: () => Math.random() > 0.5,
-                    randomColor: () => ['#ff00ff', '#00ff00', '#ffff00', '#ff0000', '#00ffff', '#ff6600', '#00ff99', '#ff1493', '#00ced1', '#32cd32', '#ff4500', '#1e90ff', '#ffd700', '#ff69b4', '#00bfff', '#7fff00', '#adff2f', '#ff7f50', '#dc143c', '#00008b','#ffffff','000000','a1b2c3'][Math.floor(Math.random() * 20)],
+                    randomColor: () => ['#ff00ff', '#00ff00', '#ffff00', '#ff0000', '#00ffff', '#ff6600', '#00ff99', '#ff1493', '#00ced1', '#32cd32', '#ff4500', '#1e90ff', '#ffd700', '#ff69b4', '#00bfff', '#7fff00', '#adff2f', '#ff7f50', '#dc143c', '#00008b', '#ffffff', '000000', 'a1b2c3'][Math.floor(Math.random() * 20)],
                     randomOffset: () => ({ x: Math.random() * 80 - 40, y: Math.random() * 50 - 25 }),
                     randomAlpha: () => Math.random() * 0.9 + 0.2,
                     randomVelocity: () => Math.random() * 2 + 0.4,

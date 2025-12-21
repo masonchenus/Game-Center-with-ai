@@ -7,6 +7,7 @@ class CohereModel:
         self.api_key = os.getenv("COHERE_API_KEY")
         if not self.api_key:
             raise ValueError("COHERE_API_KEY not found in environment")
+            print("COHERE_API_KEY not found in environment")
         
         # Initialize Cohere client (HTTPS requests handled internally)
         self.client = cohere.Client(self.api_key)

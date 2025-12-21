@@ -1,0 +1,358 @@
+.venv/
+    ├── .gitignore
+    ├── bin/
+    │   ├── activate
+    │   ├── activate.csh
+    │   ├── activate.fish
+    │   ├── Activate.ps1
+    │   ├── distro
+    │   ├── fastavro
+    │   ├── hf
+    │   ├── httpx
+    │   ├── normalizer
+    │   ├── openai
+    │   ├── pip
+    │   ├── pip3
+    │   ├── pip3.9
+    │   ├── python
+    │   ├── python3
+    │   ├── python3.9
+    │   ├── tiny-agents
+    │   └── tqdm
+    ├── include/
+    ├── lib/
+    │   └── python3.9/
+    │       └── site-packages/
+    │           ├── _distutils_hack/
+    │           │   ├── __init__.py
+    │           │   └── override.py
+    │           ├── _yaml/
+    │           │   └── __init__.py
+    │           ├── annotated_types/
+    │           │   ├── __init__.py
+    │           │   ├── py.typed
+    │           │   └── test_cases.py
+    │           ├── annotated_types-0.7.0.dist-info/
+    │           │   ├── INSTALLER
+    │           │   ├── licenses/
+    │           │   │   └── LICENSE
+    │           │   ├── METADATA
+    │           │   ├── RECORD
+    │           │   └── WHEEL
+    │           ├── anyio/
+    │           │   ├── __init__.py
+    │           │   ├── _backends/
+    │           │   │   ├── __init__.py
+    │           │   │   ├── _asyncio.py
+    │           │   │   └── _trio.py
+    │           │   ├── _core/
+    │           │   │   ├── __init__.py
+    │           │   │   ├── _asyncio_selector_thread.py
+    │           │   │   ├── _contextmanagers.py
+    │           │   │   ├── _eventloop.py
+    │           │   │   ├── _exceptions.py
+    │           │   │   ├── _fileio.py
+    │           │   │   ├── _resources.py
+    │           │   │   ├── _signals.py
+    │           │   │   ├── _sockets.py
+    │           │   │   ├── _streams.py
+    │           │   │   ├── _subprocesses.py
+    │           │   │   ├── _synchronization.py
+    │           │   │   ├── _tasks.py
+    │           │   │   ├── _tempfile.py
+    │           │   │   ├── _testing.py
+    │           │   │   └── _typedattr.py
+    │           │   ├── abc/
+    │           │   │   ├── __init__.py
+    │           │   │   ├── _eventloop.py
+    │           │   │   ├── _resources.py
+    │           │   │   ├── _sockets.py
+    │           │   │   ├── _streams.py
+    │           │   │   ├── _subprocesses.py
+    │           │   │   ├── _tasks.py
+    │           │   │   └── _testing.py
+    │           │   ├── from_thread.py
+    │           │   ├── functools.py
+    │           │   ├── lowlevel.py
+    │           │   ├── py.typed
+    │           │   ├── pytest_plugin.py
+    │           │   ├── streams/
+    │           │   │   ├── __init__.py
+    │           │   │   ├── buffered.py
+    │           │   │   ├── file.py
+    │           │   │   ├── memory.py
+    │           │   │   ├── stapled.py
+    │           │   │   ├── text.py
+    │           │   │   └── tls.py
+    │           │   ├── to_interpreter.py
+    │           │   ├── to_process.py
+    │           │   └── to_thread.py
+    │           ├── anyio-4.12.0.dist-info/
+    │           │   ├── entry_points.txt
+    │           │   ├── INSTALLER
+    │           │   ├── licenses/
+    │           │   │   └── LICENSE
+    │           │   ├── METADATA
+    │           │   ├── RECORD
+    │           │   ├── top_level.txt
+    │           │   └── WHEEL
+    │           ├── certifi/
+    │           │   ├── __init__.py
+    │           │   ├── __main__.py
+    │           │   ├── cacert.pem
+    │           │   ├── core.py
+    │           │   └── py.typed
+    │           ├── certifi-2025.11.12.dist-info/
+    │           │   ├── INSTALLER
+    │           │   ├── licenses/
+    │           │   │   └── LICENSE
+    │           │   ├── METADATA
+    │           │   ├── RECORD
+    │           │   ├── top_level.txt
+    │           │   └── WHEEL
+    │           ├── charset_normalizer/
+    │           │   ├── __init__.py
+    │           │   ├── __main__.py
+    │           │   ├── api.py
+    │           │   ├── cd.py
+    │           │   ├── cli/
+    │           │   │   ├── __init__.py
+    │           │   │   └── __main__.py
+    │           │   ├── constant.py
+    │           │   ├── legacy.py
+    │           │   ├── md.cpython-39-darwin.so
+    │           │   ├── md.py
+    │           │   ├── md__mypyc.cpython-39-darwin.so
+    │           │   ├── models.py
+    │           │   ├── py.typed
+    │           │   ├── utils.py
+    │           │   └── version.py
+    │           ├── charset_normalizer-3.4.4.dist-info/
+    │           │   ├── entry_points.txt
+    │           │   ├── INSTALLER
+    │           │   ├── licenses/
+    │           │   │   └── LICENSE
+    │           │   ├── METADATA
+    │           │   ├── RECORD
+    │           │   ├── top_level.txt
+    │           │   └── WHEEL
+    │           ├── click/
+    │           │   ├── __init__.py
+    │           │   ├── _compat.py
+    │           │   ├── _termui_impl.py
+    │           │   ├── _textwrap.py
+    │           │   ├── _winconsole.py
+    │           │   ├── core.py
+    │           │   ├── decorators.py
+    │           │   ├── exceptions.py
+    │           │   ├── formatting.py
+    │           │   ├── globals.py
+    │           │   ├── parser.py
+    │           │   ├── py.typed
+    │           │   ├── shell_completion.py
+    │           │   ├── termui.py
+    │           │   ├── testing.py
+    │           │   ├── types.py
+    │           │   └── utils.py
+    │           ├── click-8.1.8.dist-info/
+    │           │   ├── INSTALLER
+    │           │   ├── LICENSE.txt
+    │           │   ├── METADATA
+    │           │   ├── RECORD
+    │           │   └── WHEEL
+    │           ├── cohere/
+    │           │   ├── __init__.py
+    │           │   ├── aliases.py
+    │           │   ├── aws_client.py
+    │           │   ├── base_client.py
+    │           │   ├── batches/
+    │           │   │   ├── __init__.py
+    │           │   │   ├── client.py
+    │           │   │   ├── raw_client.py
+    │           │   │   └── types/
+    │           │   │       ├── __init__.py
+    │           │   │       ├── batch.py
+    │           │   │       ├── batch_status.py
+    │           │   │       ├── cancel_batch_response.py
+    │           │   │       ├── create_batch_response.py
+    │           │   │       ├── get_batch_response.py
+    │           │   │       └── list_batches_response.py
+    │           │   ├── bedrock_client.py
+    │           │   ├── client.py
+    │           │   ├── client_v2.py
+    │           │   ├── config.py
+    │           │   ├── connectors/
+    │           │   │   ├── __init__.py
+    │           │   │   ├── client.py
+    │           │   │   └── raw_client.py
+    │           │   ├── core/
+    │           │   │   ├── __init__.py
+    │           │   │   ├── api_error.py
+    │           │   │   ├── client_wrapper.py
+    │           │   │   ├── datetime_utils.py
+    │           │   │   ├── file.py
+    │           │   │   ├── force_multipart.py
+    │           │   │   ├── http_client.py
+    │           │   │   ├── http_response.py
+    │           │   │   ├── http_sse/
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── _api.py
+    │           │   │   │   ├── _decoders.py
+    │           │   │   │   ├── _exceptions.py
+    │           │   │   │   └── _models.py
+    │           │   │   ├── jsonable_encoder.py
+    │           │   │   ├── pydantic_utilities.py
+    │           │   │   ├── query_encoder.py
+    │           │   │   ├── remove_none_from_dict.py
+    │           │   │   ├── request_options.py
+    │           │   │   ├── serialization.py
+    │           │   │   └── unchecked_base_model.py
+    │           │   ├── datasets/
+    │           │   │   ├── __init__.py
+    │           │   │   ├── client.py
+    │           │   │   ├── raw_client.py
+    │           │   │   └── types/
+    │           │   │       ├── __init__.py
+    │           │   │       ├── datasets_create_response.py
+    │           │   │       ├── datasets_get_response.py
+    │           │   │       ├── datasets_get_usage_response.py
+    │           │   │       └── datasets_list_response.py
+    │           │   ├── embed_jobs/
+    │           │   │   ├── __init__.py
+    │           │   │   ├── client.py
+    │           │   │   ├── raw_client.py
+    │           │   │   └── types/
+    │           │   │       ├── __init__.py
+    │           │   │       └── create_embed_job_request_truncate.py
+    │           │   ├── environment.py
+    │           │   ├── errors/
+    │           │   │   ├── __init__.py
+    │           │   │   ├── bad_request_error.py
+    │           │   │   ├── client_closed_request_error.py
+    │           │   │   ├── forbidden_error.py
+    │           │   │   ├── gateway_timeout_error.py
+    │           │   │   ├── internal_server_error.py
+    │           │   │   ├── invalid_token_error.py
+    │           │   │   ├── not_found_error.py
+    │           │   │   ├── not_implemented_error.py
+    │           │   │   ├── service_unavailable_error.py
+    │           │   │   ├── too_many_requests_error.py
+    │           │   │   ├── unauthorized_error.py
+    │           │   │   └── unprocessable_entity_error.py
+    │           │   ├── finetuning/
+    │           │   │   ├── __init__.py
+    │           │   │   ├── client.py
+    │           │   │   ├── finetuning/
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   └── types/
+    │           │   │   │       ├── __init__.py
+    │           │   │   │       ├── base_model.py
+    │           │   │   │       ├── base_type.py
+    │           │   │   │       ├── create_finetuned_model_response.py
+    │           │   │   │       ├── delete_finetuned_model_response.py
+    │           │   │   │       ├── event.py
+    │           │   │   │       ├── finetuned_model.py
+    │           │   │   │       ├── get_finetuned_model_response.py
+    │           │   │   │       ├── hyperparameters.py
+    │           │   │   │       ├── list_events_response.py
+    │           │   │   │       ├── list_finetuned_models_response.py
+    │           │   │   │       ├── list_training_step_metrics_response.py
+    │           │   │   │       ├── lora_target_modules.py
+    │           │   │   │       ├── settings.py
+    │           │   │   │       ├── status.py
+    │           │   │   │       ├── strategy.py
+    │           │   │   │       ├── training_step_metrics.py
+    │           │   │   │       ├── update_finetuned_model_response.py
+    │           │   │   │       └── wandb_config.py
+    │           │   │   └── raw_client.py
+    │           │   ├── manually_maintained/
+    │           │   │   ├── __init__.py
+    │           │   │   ├── cache.py
+    │           │   │   ├── cohere_aws/
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── chat.py
+    │           │   │   │   ├── classification.py
+    │           │   │   │   ├── client.py
+    │           │   │   │   ├── embeddings.py
+    │           │   │   │   ├── error.py
+    │           │   │   │   ├── generation.py
+    │           │   │   │   ├── mode.py
+    │           │   │   │   ├── rerank.py
+    │           │   │   │   ├── response.py
+    │           │   │   │   └── summary.py
+    │           │   │   ├── lazy_aws_deps.py
+    │           │   │   └── tokenizers.py
+    │           │   ├── models/
+    │           │   │   ├── __init__.py
+    │           │   │   ├── client.py
+    │           │   │   └── raw_client.py
+    │           │   ├── overrides.py
+    │           │   ├── py.typed
+    │           │   └── ... and more
+    │           ├── cohere-5.20.1.dist-info/
+    │           │   ├── INSTALLER
+    │           │   ├── LICENSE
+    │           │   ├── METADATA
+    │           │   ├── RECORD
+    │           │   ├── REQUESTED
+    │           │   └── WHEEL
+    │           ├── distro/
+    │           │   ├── __init__.py
+    │           │   ├── __main__.py
+    │           │   ├── distro.py
+    │           │   └── py.typed
+    │           ├── distro-1.9.0.dist-info/
+    │           │   ├── entry_points.txt
+    │           │   ├── INSTALLER
+    │           │   ├── LICENSE
+    │           │   ├── METADATA
+    │           │   ├── RECORD
+    │           │   ├── top_level.txt
+    │           │   └── WHEEL
+    │           ├── distutils-precedence.pth
+    │           ├── exceptiongroup/
+    │           │   ├── __init__.py
+    │           │   ├── _catch.py
+    │           │   ├── _exceptions.py
+    │           │   ├── _formatting.py
+    │           │   ├── _suppress.py
+    │           │   ├── _version.py
+    │           │   └── py.typed
+    │           ├── exceptiongroup-1.3.1.dist-info/
+    │           │   ├── INSTALLER
+    │           │   ├── licenses/
+    │           │   │   └── LICENSE
+    │           │   ├── METADATA
+    │           │   ├── RECORD
+    │           │   └── WHEEL
+    │           ├── fastavro/
+    │           │   ├── __init__.py
+    │           │   ├── __main__.py
+    │           │   ├── _logical_readers.cpython-39-darwin.so
+    │           │   ├── _logical_readers_py.py
+    │           │   ├── _logical_writers.cpython-39-darwin.so
+    │           │   ├── _logical_writers_py.py
+    │           │   ├── _read.cpython-39-darwin.so
+    │           │   ├── _read_common.py
+    │           │   ├── _read_py.py
+    │           │   ├── _schema.cpython-39-darwin.so
+    │           │   ├── _schema_common.py
+    │           │   ├── _schema_py.py
+    │           │   ├── _validate_common.py
+    │           │   ├── _validation.cpython-39-darwin.so
+    │           │   ├── _validation_py.py
+    │           │   ├── _write.cpython-39-darwin.so
+    │           │   ├── _write_common.py
+    │           │   ├── _write_py.py
+    │           │   ├── const.py
+    │           │   ├── io/
+    │           │   │   ├── __init__.py
+    │           │   │   ├── binary_decoder.py
+    │           │   │   ├── binary_encoder.py
+    │           │   │   ├── json_decoder.py
+    │           │   │   ├── json_encoder.py
+    │           │   │   ├── parser.py
+    │           │   │   └── symbols.py
+    │           │   └── ... and more
+    │           └── ... and more
+    └── pyvenv.cfg

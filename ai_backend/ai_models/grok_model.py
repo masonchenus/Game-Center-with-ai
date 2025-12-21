@@ -6,6 +6,7 @@ class GrokModel:
         self.api_key = os.getenv("GROK_API_KEY")
         if not self.api_key:
             raise ValueError("GROK_API_KEY not found in environment")
+            print("GROK_API_KEY not found in environment")
         self.base_url = "https://api.x.ai/v1"
 
     def generate(self, prompt: str) -> str:
