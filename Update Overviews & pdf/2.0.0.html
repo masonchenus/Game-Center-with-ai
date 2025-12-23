@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>2.0.0.md</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+        h1 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        h2 { color: #555; margin-top: 20px; }
+        ul { margin-left: 20px; }
+        li { margin: 5px 0; }
+        strong { color: #333; }
+        code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+<h1>Game Center Version 2.0.0</h1>
+<br/>
+<p>**Release Date:** December 21, 2025</p>
+<br/>
+<h2>Purpose</h2>
+<br/>
+<p>iGame-center is a browser-based game platform that tracks player progress, scores, and achievements. It provides a centralized hub for players to play games, view stats, and compete globally.</p>
+<br/>
+<h2>Core Components</h2>
+<br/>
+<li>**index.html** — Main game interface where players play the game.</li>
+<li>**scoreboard.html** — Displays global scores and player rankings.</li>
+<li>**gamercard.html** — Shows detailed player stats and achievements.</li>
+<li>**src/core/** — Contains all frontend code (HTML, JS, CSS) that runs in the browser.</li>
+<br/>
+<h2>Backend / Data Handling</h2>
+<br/>
+<li>**GraphQL API** (via server.js and graphql/) handles storing and querying scores and achievements. It allows the frontend to retrieve exactly the data it needs.</li>
+<li>**In-memory storage** (currently in graphql/data.js) temporarily stores scores and achievements; can be upgraded to a database later.</li>
+<br/>
+<h2>Features</h2>
+<br/>
+<li>Global Score Tracking — Players' scores are tracked and displayed on a leaderboard.</li>
+<li>Gamercard System — Personalized player stats.</li>
+<li>Achievements — Planned for future updates (2.1+).</li>
+<li>Update Logging — Optional documentation using `.tex` files for changelogs.</li>
+<br/>
+<h2>Technology Stack</h2>
+<br/>
+<li>**Frontend:** HTML, JavaScript</li>
+<li>**Backend:** Node.js + Apollo Server</li>
+<li>**API:** GraphQL</li>
+<li>**Storage:** In-memory JS arrays (future: database)</li>
+<li>**Optional:** TeX (`.tex` files) for update overviews or documentation</li>
+<br/>
+<h2>Workflow Overview</h2>
+<br/>
+<p>1. Player plays game on **index.html**.</p>
+<p>2. Score is sent via GraphQL mutation to backend.</p>
+<p>3. Backend stores the score.</p>
+<p>4. **scoreboard.html** queries backend via GraphQL to show updated leaderboard.</p>
+<p>5. Gamercard queries backend to display stats and achievements.</p>
+<p>6. Updates can be documented in `.tex` files for professional changelogs.</p>
+<br/>
+</body></html>
