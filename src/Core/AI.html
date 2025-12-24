@@ -27,35 +27,46 @@
         }
 
         /* Inputs */
-        textarea,
-        select {
+        .input-container {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            margin-bottom: 12px;
+        }
+
+        textarea {
             width: 100%;
             background: #111;
             color: #fff;
             border: 1px solid #333;
             border-radius: 6px;
             padding: 10px;
-            margin-top: 6px;
+            box-sizing: border-box;
+            resize: none;
+            min-height: 45px;
+            flex: 1;
+            font-family: inherit;
+            font-size: inherit;
         }
 
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        /* Button */
         button {
-            margin-top: 10px;
-            padding: 10px 16px;
+            padding: 10px 20px;
             background: #1e90ff;
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
+            font-weight: bold;
+            white-space: nowrap;
         }
 
         button:hover {
             background: #187bcd;
+        }
+
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
         }
 
         /* Chat history */
@@ -75,17 +86,26 @@
             padding: 10px 12px;
             border-radius: 8px;
             line-height: 1.4;
+            word-wrap: break-word;
         }
 
         .message.user {
             background: #1a1a1a;
             text-align: right;
+            margin-left: 60px;
         }
 
         .message.ai {
             background: #111827;
             border-left: 3px solid #1e90ff;
             text-align: left;
+            margin-right: 60px;
+        }
+
+        .message-meta {
+            font-size: 11px;
+            color: #666;
+            margin-top: 4px;
         }
     </style>
 </head>
@@ -93,7 +113,137 @@
 <body>
     <div class="container">
         <h1>Nexus AI</h1>
+
+        <!-- Input area: ChatGPT-like -->
+        <div class="input-container">
+            <textarea id="prompt" placeholder="Ask me anything..."></textarea>
+            <button id="send-btn">Send</button>
+        </div>
+        <span id="loading" style="display: none; margin-top: 8px; color: #888;">Loading...</span>
+
+        <!-- Chat history -->
+        <div class="chat-history" id="chat-history"></div>
+
+        <!-- Debug info: shows w and y samples (collapsible) -->
+        <div id="debug-info"
+            style="margin-top: 20px; padding: 15px; background: #0b0b0b; border: 1px solid #222; border-radius: 8px; display: none; cursor: pointer;"
+            onclick="this.style.display='none'">
+            <h3 style="margin-top: 0; font-size: 14px;">🧠 Brain Details (click to hide)</h3>
+            <div id="debug-content" style="font-size: 12px; color: #aaa; margin-top: 10px;"></div>
+        </div>
     </div>
+
+    <script>
+        const API_URL = "http://127.0.0.1:8000/api/run";
+        const DEFAULT_MODEL = "nexus";
+
+        const promptInput = document.getElementById("prompt");
+        const sendBtn = document.getElementById("send-btn");
+        const loadingSpan = document.getElementById("loading");
+        const chatHistory = document.getElementById("chat-history");
+        const debugInfo = document.getElementById("debug-info");
+        const debugContent = document.getElementById("debug-content");
+
+        sendBtn.addEventListener("click", async () => {
+            const prompt = promptInput.value.trim();
+            if (!prompt) {
+                alert("Please enter a prompt");
+                return;
+            }
+
+            // Add user message to chat
+            addMessage("user", prompt);
+            promptInput.value = "";
+            sendBtn.disabled = true;
+            loadingSpan.style.display = "block";
+
+            try {
+                // Call Python backend with default model
+                // x is generated internally from the prompt
+                // b is a large hidden array
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        mode: "helper",
+                        model: DEFAULT_MODEL,
+                        input: JSON.stringify({
+                            prompt: prompt
+                        }),
+                        user_id: "web",
+                        session_id: "default"
+                    }),
+                    credentials: "include"
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.statusText} - Check if FastAPI server is running on ${API_URL.split('/api')[0]}`);
+                }
+
+                const data = await response.json();
+                const output = JSON.parse(data.output); // Python returns stringified JSON
+
+                // Extract AI response
+                const aiResponse = output.response || "No response";
+                const tokens = output.tokens || [];
+                const tokenCount = output.token_count || 0;
+
+                // Add AI message with token count
+                addMessage("ai", aiResponse, { tokens: tokenCount });
+
+                // Show debug info (w and b samples, plus computed y sample)
+                if (output.virtual_arrays) {
+                    debugInfo.style.display = "block";
+                    const va = output.virtual_arrays;
+                    const wSample = va.w?.sample_first_10 || [];
+                    const bSample = va.b?.sample_first_10 || [];
+                    const ySample = va.y_sample_first_10 || [];
+                    const x = va.x || 0;
+                    const wLen = va.w?.length || 0;
+                    const bLen = va.b?.length || 0;
+
+                    debugContent.innerHTML = `
+                        <p><strong>x (internally generated):</strong> ${x.toFixed(4)}</p>
+                        <p><strong>w (brain) sample (first 10):</strong> ${JSON.stringify(wSample)}</p>
+                        <p><strong>b (bias) sample (first 10):</strong> ${JSON.stringify(bSample)}</p>
+                        <p><strong>y = w·x + b (first 10):</strong> ${JSON.stringify(ySample)}</p>
+                        <p><strong>Parameters:</strong> w.length = ${wLen.toLocaleString()}, b.length = ${bLen.toLocaleString()}, tokens = ${tokenCount}</p>
+                    `;
+                }
+            } catch (error) {
+                const errorMsg = error.message || "Failed to fetch - ensure FastAPI server is running";
+                addMessage("ai", `❌ ${errorMsg}`);
+                console.error("Fetch error:", error);
+            } finally {
+                sendBtn.disabled = false;
+                loadingSpan.style.display = "none";
+            }
+        });
+
+        // Allow Enter key to submit (just Enter, not Ctrl+Enter)
+        promptInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey) {
+                e.preventDefault();
+                sendBtn.click();
+            }
+        });
+
+        function addMessage(role, text, meta = {}) {
+            const msgDiv = document.createElement("div");
+            msgDiv.className = `message ${role}`;
+            msgDiv.textContent = text;
+
+            if (meta.tokens) {
+                const metaDiv = document.createElement("div");
+                metaDiv.className = "message-meta";
+                metaDiv.textContent = `${meta.tokens} tokens`;
+                msgDiv.appendChild(metaDiv);
+            }
+
+            chatHistory.appendChild(msgDiv);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+    </script>
 </body>
 
 </html>

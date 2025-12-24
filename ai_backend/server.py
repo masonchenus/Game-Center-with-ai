@@ -5,10 +5,20 @@ ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from ai_backend.orchestrator import run_mode
 
 app = FastAPI(title="iGame AI API")
+
+# Enable CORS for all origins (allow frontend to call backend)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)
 
 class RunRequest(BaseModel):
     mode: str

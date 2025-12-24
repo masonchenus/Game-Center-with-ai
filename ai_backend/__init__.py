@@ -4,13 +4,41 @@ import json
 import logging
 
 # -----------------------
-# Import and initialize all model providers
+# Import and initialize core and extra model providers
 # -----------------------
-from .models.chatgpt_model import ChatGPTModel
-from .models.perplexity_model import PerplexityModel
-from .models.gemini_model import GeminiModel
-from .models.deepseek_model import DeepseekModel
-from .models.grok_model import GrokModel
+try:
+    from .ai_models.chatgpt_model import ChatGPTModel
+except Exception:
+    # Fallback shim when optional external dependencies (like openai) are missing.
+    class ChatGPTModel:
+        def __init__(self):
+            self.name = "chatgpt-shim"
+
+        def generate(self, prompt: str) -> str:
+            return f"[chatgpt-shim] {prompt}"
+
+try:
+    from .ai_models.gemini_model import GeminiModel
+except Exception:
+    class GeminiModel:
+        def __init__(self):
+            self.name = "gemini-shim"
+
+        def generate(self, prompt: str) -> str:
+            return f"[gemini-shim] {prompt}"
+
+try:
+    from .ai_models.grok_model import GrokModel
+except Exception:
+    class GrokModel:
+        def __init__(self):
+            self.name = "grok-shim"
+
+        def generate(self, prompt: str) -> str:
+            return f"[grok-shim] {prompt}"
+
+# Extra (local simulated) models
+from .models import NexusFactory, FlashModel, ProFlashModel, UltraModel, UltraFlashModel
 
 # -----------------------
 # Logging setup
@@ -41,22 +69,23 @@ if not os.path.exists(billing_file):
     with open(billing_file, "w") as f:
         json.dump({"credits": ultra_credits}, f)
 
-# -----------------------
-# Import and initialize all model providers
-# -----------------------
-from .models.chatgpt_model import ChatGPTModel
-from .models.perplexity_model import PerplexityModel
-from .models.gemini_model import GeminiModel
-from .models.deepseek_model import DeepseekModel
-from .models.grok_model import GrokModel
-
 # Initialize models once for the whole backend
+_nexus_factory = NexusFactory()
 models = {
     "chatgpt": ChatGPTModel(),
-    "perplexity": PerplexityModel(),
     "gemini": GeminiModel(),
-    "deepseek": DeepseekModel(),
-    "grok": GrokModel()
+    "grok": GrokModel(),
+
+    # Nexus factory and a couple of convenience instances
+    "nexus_factory": _nexus_factory,
+    "nexus": _nexus_factory.get("1.0"),
+    "nexus-10.5.5": _nexus_factory.get("10.5.5"),
+
+    # Flash-family simulated models
+    "flash": FlashModel(),
+    "pro-flash": ProFlashModel(),
+    "ultra": UltraModel(),
+    "ultra-flash": UltraFlashModel(),
 }
 
-logger.info("iGame-AI package initialized with all models loaded.")
+logger.info("iGame-AI package initialized with core and extra models loaded.")

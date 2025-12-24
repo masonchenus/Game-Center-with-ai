@@ -1,15 +1,13 @@
 from importlib import import_module
-
-def run_mode(mode_name, capability, input_data, model_name, user_id, session_id):
-    module = import_module(f"ai_backend.modules.{mode_name}")
-    # Now this will work without any ModuleNotFoundError
+from ai_backend.virtual_array import VirtualLargeArray
+import hashlib
 
 # ai_backend/orchestrator.py
 import os
 import json
 
 # Import all 50 modules
-from modules import (
+from ai_backend.modules import (
     game_generator, math_solver, slides_generator, helper_module, agent_module,
     tester_module, codegen_module, explain_module, summarizer_module, story_module,
     dialogue_module, brainstorming_module, outline_module, quiz_module, trivia_module,
@@ -21,7 +19,7 @@ from modules import (
     planning_module, checklist_module, prompt_idea_module, generator_module, naming_module,
     stats_analyzer_module, visualization_module, feedback_module, creativity_module, documentation_module
 )
-from importlib import import_module
+ 
 
 # Import AI models
 from ai_backend import models
@@ -118,6 +116,12 @@ class BaseAI:
             "documentation": documentation_module.documentation
         }
 
+        # Create a memory-safe virtual array that *appears* to have 148 trillion elements.
+        # This does NOT allocate memory for each element; values are generated on-demand.
+        self.virtual_array_w = VirtualLargeArray(148_000_000_000_000, seed="ai_backend_w_v1")
+        # b is also a large array (but same size for now)
+        self.virtual_array_b = VirtualLargeArray(148_000_000_000_000, seed="ai_backend_b_v1")
+
     # ------------------------
     # Determine mode from prompt
     # ------------------------
@@ -175,4 +179,66 @@ def run_user_mode(mode_name, input_data, user_id, session_id, model_name):
         from ai_backend.logger import error_logger
         error_logger.error(f"{user_id},{session_id},{model_name},{mode_name},{str(e)}")
         return f"Error: {str(e)}"
+
+
+def run_mode(mode_name=None, model_name="chatgpt", input_data="", user_id="web", session_id="default"):
+    """Compatibility wrapper used by the FastAPI server.
+
+    Generates x internally from the prompt (deterministic, unknown to user).
+    Computes y = w·x + b using large virtual arrays w and b.
+    Each model generates tokens using its own method.
+    Returns a JSON string with the AI response and debug info.
+    """
+    ai = BaseAI(ultra_mode=True)
+    
+    # Parse input to get prompt
+    prompt = input_data
+    try:
+        parsed = json.loads(input_data)
+        if isinstance(parsed, dict):
+            prompt = parsed.get("prompt", input_data)
+    except Exception:
+        pass
+
+    # Generate x internally from the prompt (deterministic but hidden from user)
+    # Use hash of prompt to generate a seed for x
+    prompt_hash = hashlib.sha256(prompt.encode("utf-8")).digest()
+    x_seed = int.from_bytes(prompt_hash[:8], "big") % 1_000_000
+    x = x_seed / 100_000.0  # Normalize x to ~0-10 range
+
+    result = ai.handle_request(prompt=prompt, model_provider=model_name)
+
+    # Get the model and call its token generation
+    model = models.get(model_name.lower(), models.get("nexus"))
+    if hasattr(model, "generate_tokens"):
+        tokens = model.generate_tokens(result.get("response", ""))
+    else:
+        tokens = result.get("response", "").split()
+
+    # Attach model's generated tokens to response
+    result["tokens"] = tokens
+    result["token_count"] = len(tokens)
+
+    # Attach virtual array metadata (w and b samples, plus computed y sample)
+    try:
+        sample_w = ai.virtual_array_w.sample(10, start=0)
+        sample_b = ai.virtual_array_b.sample(10, start=0)
+        
+        # Compute y = w*x + b for the samples
+        y_sample = [w_i * x + b_i for w_i, b_i in zip(sample_w, sample_b)]
+
+        result["virtual_arrays"] = {
+            "w": {"length": len(ai.virtual_array_w), "sample_first_10": sample_w},
+            "b": {"length": len(ai.virtual_array_b), "sample_first_10": sample_b},
+            "x": x,  # Hidden internally generated x
+            "y_sample_first_10": y_sample
+        }
+    except Exception:
+        result["virtual_arrays"] = {
+            "w": {"length": len(ai.virtual_array_w), "sample_first_10": []},
+            "b": {"length": len(ai.virtual_array_b), "sample_first_10": []},
+            "y_sample_first_10": []
+        }
+
+    return json.dumps(result)
 
