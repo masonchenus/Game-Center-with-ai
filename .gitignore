@@ -74,3 +74,5 @@ server.log
 __pycache__/
 Docker/
 *00Tree.html
+hidden/
+*.toml
