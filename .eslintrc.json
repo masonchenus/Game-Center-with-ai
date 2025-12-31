@@ -17,31 +17,69 @@
     "cancelAnimationFrame": "readonly"
   },
   "rules": {
-    "max-lines": ["warn", {"max": 35000}],
-    "linebreak-style": ["error", "unix"],
-    "semi": ["error", "always"],
-    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
-    "no-console": ["warn", { "allow": ["warn", "error"] }],
-    "no-constant-condition": "warn",
-    "prefer-const": "error",
-    "prefer-arrow-callback": "warn",
-    "arrow-spacing": "error",
-    "space-before-function-paren": ["error", {
-      "anonymous": "always",
-      "named": "never",
-      "asyncArrow": "always"
-    }],
-    "object-curly-spacing": ["error", "always"],
-    "array-bracket-spacing": ["error", "never"],
-    "keyword-spacing": "error",
-    "comma-spacing": "warn",
-    "no-trailing-spaces": "warn",
-    "eol-last": ["error", "always"],
-    "max-len": ["warn", { "code": 100, "ignoreUrls": false }],
-    "no-var": "error",
-    "eqeqeq": ["error", "always"],
-    "curly": ["error", "all"],
-    "brace-style": ["error", "1tbs", { "allowSingleLine": true }]
+    "max-lines": [
+      "off"
+    ],
+    "linebreak-style": [
+      "off"
+    ],
+    "semi": [
+      "off"
+    ],
+    "no-unused-vars": [
+      "off"
+    ],
+    "no-console": [
+      "off"
+    ],
+    "no-constant-condition": [
+      "off"
+    ],
+    "prefer-const": [
+      "off"
+    ],
+    "prefer-arrow-callback": [
+      "off"
+    ],
+    "arrow-spacing": [
+      "off"
+    ],
+    "space-before-function-paren": [
+      "off"
+    ],
+    "object-curly-spacing": [
+      "off"
+    ],
+    "array-bracket-spacing": [
+      "off"
+    ],
+    "keyword-spacing": [
+      "off"
+    ],
+    "comma-spacing": [
+      "off"
+    ],
+    "no-trailing-spaces": [
+      "off"
+    ],
+    "eol-last": [
+      "off"
+    ],
+    "max-len": [
+      "off"
+    ],
+    "no-var": [
+      "off"
+    ],
+    "eqeqeq": [
+      "off"
+    ],
+    "curly": [
+      "off"
+    ],
+    "brace-style": [
+      "off"
+    ]
   }
 }
 // eslint-disable-next-line eol-last

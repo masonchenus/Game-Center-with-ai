@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Frontend Interface</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+
+<body>
+    <div id="app">
+        <header class="main-header">
+            <h1>AI Assistant</h1>
+            <nav>
+                <button id="chatBtn" class="nav-btn active">Chat</button>
+                <button id="modulesBtn" class="nav-btn">Modules</button>
+                <button id="settingsBtn" class="nav-btn">Settings</button>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <section id="chatSection" class="content-section active">
+                <div id="chatContainer" class="chat-container">
+                    <div id="chatMessages" class="chat-messages">
+                        <!-- Messages will be added here -->
+                    </div>
+                    <div class="chat-input-container">
+                        <textarea id="userInput" placeholder="Type your message..." rows="3"></textarea>
+                        <button id="sendBtn" class="send-btn">Send</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="modulesSection" class="content-section">
+                <h2>AI Modules</h2>
+                <div id="modulesGrid" class="modules-grid">
+                    <!-- Modules will be added here -->
+                </div>
+            </section>
+
+            <section id="settingsSection" class="content-section">
+                <h2>Settings</h2>
+                <div class="settings-form">
+                    <div class="setting-group">
+                        <label for="modelSelect">AI Model</label>
+                        <select id="modelSelect">
+                            <option value="gpt-4">GPT-4</option>
+                            <option value="claude-3-opus">Claude 3 Opus</option>
+                            <option value="gemini-pro">Gemini Pro</option>
+                        </select>
+                    </div>
+                    <div class="setting-group">
+                        <label for="temperatureSlider">Temperature</label>
+                        <input type="range" id="temperatureSlider" min="0" max="2" step="0.1" value="0.7">
+                        <span id="temperatureValue">0.7</span>
+                    </div>
+                    <div class="setting-group">
+                        <label for="maxTokensInput">Max Tokens</label>
+                        <input type="number" id="maxTokensInput" value="2000" min="100" max="100000">
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3>Quick Actions</h3>
+                <div class="quick-actions">
+                    <button class="action-btn" data-action="generate-code">Generate Code</button>
+                    <button class="action-btn" data-action="analyze-text">Analyze Text</button>
+                    <button class="action-btn" data-action="translate">Translate</button>
+                    <button class="action-btn" data-action="summarize">Summarize</button>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Recent Conversations</h3>
+                <div id="recentChats" class="recent-chats">
+                    <!-- Recent chats will be added here -->
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script src="scripts/app.js"></script>
+</body>
+
+</html>

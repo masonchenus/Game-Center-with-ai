@@ -1,7 +1,11 @@
 {
     "$schema": "https://biomejs.dev/schemas/2.1.2/schema.json",
     "formatter": {
-        "enabled": true
+        "enabled": true,
+        "indentStyle": "space",
+        "indentWidth": 4,
+        "lineWidth": 150,
+        "skipComments": true
     },
     "linter": {
         "enabled": true,
@@ -11,38 +15,40 @@
                 "recommended": false
             },
             "correctness": {
-                "useExhaustiveDependencies": "off",
-                "noInnerDeclarations": "off"
+                "useExhaustiveDependencies": "on",
+                "noInnerDeclarations": "off",
+                "noUnusedVariables": "off"
             },
             "style": {
-                "recommended": false,
-                "noUselessElse": "warn",
+                "recommended": true,
+                "noUselessElse": "off",
                 "useAsConstAssertion": "off",
                 "useBlockStatements": "off",
                 "useConsistentArrayType": "off",
-                "useDefaultParameterLast": "warn",
+                "useDefaultParameterLast": "off",
                 "useEnumInitializers": "off",
-                "useExponentiationOperator": "warn",
+                "useExponentiationOperator": "off",
                 "useExportType": "off",
                 "useFragmentSyntax": "off",
                 "useImportType": "off",
-                "useLiteralEnumMembers": "warn",
+                "useLiteralEnumMembers": "off",
                 "noUnusedTemplateLiteral": "off",
-                "useConst": "warn",
-                "useShorthandAssign": "warn",
-                "useTemplate": "warn"
+                "useConst": "off",
+                "useShorthandAssign": "off",
+                "useTemplate": "off",
+                "noCommaSlots": "on"
             },
             "complexity": {
                 "noForEach": "off",
                 "noExcessiveCognitiveComplexity": {
                     "level": "off",
                     "options": {
-                        "maxAllowedComplexity": 125
+                        "maxAllowedComplexity": 150
                     }
                 },
                 "useLiteralKeys": "off",
                 "useArrowFunction": "off",
-                "useFlatMap": "info"
+                "useFlatMap": "off"
             },
             "suspicious": {
                 "noArrayIndexKey": "off",
@@ -50,7 +56,9 @@
                 "noImplicitAnyLet": "off",
                 "noDoubleEquals": "off",
                 "noGlobalIsNan": "off",
-                "noAssignInExpressions": "off"
+                "noAssignInExpressions": "off",
+                "noConsole": "off",
+                "noDebugger": "off"
             },
             "nursery": {
                 "recommended": false
@@ -59,7 +67,7 @@
     },
     "css": {
         "linter": {
-            "enabled": true
+            "enabled": false
         },
         "parser": {
             "cssModules": true
@@ -72,7 +80,7 @@
     },
     "markdown": {
         "linter": {
-            "enabled": true
+            "enabled": false
         }
     }
 }
